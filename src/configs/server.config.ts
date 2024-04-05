@@ -14,7 +14,7 @@ export const serverConfig = (server: Application) => {
   server.use(express.json());
   server.use(bodyParser.json({ limit: "30mb" }));
   server.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
-  server.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
+  //server.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
   server.use(
     session({
       secret: process.env.SESSION_SECRET,
