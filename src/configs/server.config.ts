@@ -43,7 +43,7 @@ export const serverConfig = (server: Application) => {
         "Authorization",
       ],
 
-      methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+      methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
       origin:
         process.env.NODE_ENV === "DEV"
           ? [process.env.LOCAL_HOST_URL_CORS, process.env.APPLE_API_URL]
