@@ -1,0 +1,28 @@
+export type AppType = {
+  id: string;
+  name: string;
+  env: string;
+  tenant: string;
+  city: string;
+  country: string;
+  region: string;
+  iosVersion?: string;
+  iosLink?: string;
+  iosRelease?: string;
+  iosFolder?: string;
+  iosBuilds?: string[];
+  iosScreenshots?: string[];
+  androidVersion?: string;
+  androidRelease?: string;
+  androidFolder?: string;
+  androidLink?: string;
+  androidBuilds?: string[];
+  androidScreenshots?: string[];
+  languages?: string[];
+  colorSpecs?: string;
+  figmaAppName?: string;
+  webAppFigmaLink?: string;
+  webAppLink?: string;
+  lastStoreUpdate?: number;
+  imageUrl?: string;
+};
