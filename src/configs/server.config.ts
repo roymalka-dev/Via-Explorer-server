@@ -27,6 +27,18 @@ export const serverConfig = (server: Application) => {
     })
   );
 
+  server.use(
+    cors({
+      credentials: true,
+      allowedHeaders: ["Authorization", "Content-Type"],
+      origin: [
+        "http://localhost:3000",
+        "https://itunes.apple.com",
+        "https://via-explorer.roymalka.dev",
+      ],
+    })
+  );
+
   /*
   server.use(
     cors({
