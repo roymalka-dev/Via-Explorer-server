@@ -18,6 +18,10 @@ serverConfig(server);
 
 router(apiPrefix, server, routes);
 
+server.get("/", (req, res) => {
+  res.json({ message: "Via Explorer API v1" });
+});
+
 setConfigurations().then(() => {
   server.listen(port, hostname, () => {
     console.log(`Server is running on  ${hostname}:${port}`);
