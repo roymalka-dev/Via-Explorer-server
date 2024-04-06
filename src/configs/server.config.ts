@@ -30,19 +30,6 @@ export const serverConfig = (server: Application) => {
   server.use(
     cors({
       credentials: true,
-      allowedHeaders: ["Authorization", "Content-Type"],
-      origin: [
-        "http://localhost:3000",
-        "https://itunes.apple.com",
-        "https://via-explorer.roymalka.dev",
-      ],
-    })
-  );
-
-  /*
-  server.use(
-    cors({
-      credentials: true,
       allowedHeaders: [
         "X-CSRF-Token",
         "X-Requested-With",
@@ -62,8 +49,7 @@ export const serverConfig = (server: Application) => {
           ? [process.env.LOCAL_HOST_URL_CORS, process.env.APPLE_API_URL]
           : [process.env.PRODUCTION_URL, process.env.APPLE_API_URL],
     })
-);
-*/
+  );
 
   process.env.NODE_ENV === "DEV" && server.use(morgan("common"));
 };
