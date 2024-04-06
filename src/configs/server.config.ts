@@ -30,7 +30,11 @@ export const serverConfig = (server: Application) => {
   server.use(
     cors({
       credentials: true,
-      origin: [" https://via-explorer.roymalka.dev", "http://localhost:5173"],
+      origin: [
+        "https://via-explorer.roymalka.dev",
+        "http://localhost:5173",
+        "*",
+      ],
     })
   );
 
