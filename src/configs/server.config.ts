@@ -27,6 +27,9 @@ export const serverConfig = (server: Application) => {
     })
   );
 
+  server.use(cors({ origin: "*" }));
+
+  /*
   server.use(
     cors({
       credentials: true,
@@ -46,10 +49,11 @@ export const serverConfig = (server: Application) => {
       methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
       origin:
         process.env.NODE_ENV === "DEV"
-          ? [process.env.LOCAL_HOST_URL_CORS, process.env.APPLE_API_URL, "*"]
-          : [process.env.PRODUCTION_CORS_URL, process.env.APPLE_API_URL, "*"],
+          ? [process.env.LOCAL_HOST_URL_CORS, process.env.APPLE_API_URL]
+          : [process.env.PRODUCTION_CORS_URL, process.env.APPLE_API_URL],
     })
   );
+  */
 
   process.env.NODE_ENV === "DEV" && server.use(morgan("common"));
 };
