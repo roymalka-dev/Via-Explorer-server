@@ -27,7 +27,14 @@ export const serverConfig = (server: Application) => {
     })
   );
 
-  server.use(cors({ origin: "*" }));
+  server.use(
+    cors({
+      origin: [
+        process.env.PRODUCTION_CORS_URL,
+        process.env.LOCAL_HOST_URL_CORS,
+      ],
+    })
+  );
 
   /*
   server.use(
