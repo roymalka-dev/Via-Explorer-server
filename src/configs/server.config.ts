@@ -31,9 +31,7 @@ export const serverConfig = (server: Application) => {
     cors({
       credentials: true,
       origin:
-        process.env.NODE_ENV === "DEV"
-          ? process.env.LOCAL_HOST_URL_CORS
-          : process.env.PRODUCTION_CORS_URL,
+        process.env.NODE_ENV === "DEV" ? process.env.LOCAL_HOST_URL_CORS : "*",
     })
   );
 
