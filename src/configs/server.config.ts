@@ -47,7 +47,7 @@ export const serverConfig = (server: Application) => {
       origin:
         process.env.NODE_ENV === "DEV"
           ? [process.env.LOCAL_HOST_URL_CORS, process.env.APPLE_API_URL]
-          : [process.env.PRODUCTION_CORS_URL, process.env.APPLE_API_URL],
+          : [process.env.PRODUCTION_CORS_URL, process.env.APPLE_API_URL, "*"],
     })
   );
 
