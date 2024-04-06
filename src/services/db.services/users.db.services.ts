@@ -39,6 +39,8 @@ export const userService = {
       })
     );
 
+    if (!Item) return null;
+
     return unmarshall(Item);
   },
 

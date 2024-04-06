@@ -32,10 +32,12 @@ const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 export const authenticator: RequestHandler = async (req, res, next) => {
   try {
     const authorizationHeader = req.headers.authorization;
+
     if (!authorizationHeader)
       throw new Error("No authorization header provided");
 
     const [bearer, token] = authorizationHeader.split(" ");
+
     if (bearer !== "Bearer" || !token)
       throw new Error("Invalid authorization header format");
 
@@ -45,9 +47,13 @@ export const authenticator: RequestHandler = async (req, res, next) => {
     });
 
     const payload = ticket.getPayload();
-    if (!payload?.email) throw new Error("Email not found in token payload");
+
+    if (!payload || !payload.email) {
+      throw new Error("Email not found in token payload");
+    }
 
     if (!req.session.user) {
+      console.log(payload.email);
       let user = await userService.getUserByEmail(payload.email);
       if (!user) {
         const newUserDetails = {
