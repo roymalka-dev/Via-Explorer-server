@@ -1,9 +1,9 @@
 import express from "express";
 import { serverConfig } from "./configs/server.config";
-import { routes } from "./configs/routes.config/routes.config";
 import { router } from "./routes/router";
 import dotenv from "dotenv";
 import { setConfigurations } from "./utils/configurations.utils";
+import { routes } from "./routes/routes";
 
 dotenv.config();
 const port = Number(process.env.PORT || 3000);

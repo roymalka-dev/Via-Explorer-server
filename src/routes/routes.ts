@@ -1,10 +1,9 @@
-import { addNewAppController } from "../../controllers/app.controllers";
-import { EndpointType, RouteType } from "types/routes.types";
-import { appEndpoints } from "./app.endpoints.config";
-import { authenticator } from "../../middleware/authenticator";
-import { userEndpoints } from "./user.endpoints.config";
-import { configurationsEndpoints } from "./configurations.endpoints";
-import { requestsEndpoints } from "./requests.endpoints.config";
+import { authenticator } from "../middleware/authenticator";
+import { appEndpoints } from "./endpoints/app.endpoints";
+import { configurationsEndpoints } from "./endpoints/configurations.endpoints";
+import { requestsEndpoints } from "./endpoints/requests.endpoints";
+import { userEndpoints } from "./endpoints/user.endpoints";
+import { RouteType } from "../types/routes.types";
 
 export const routes: RouteType[] = [
   /**
