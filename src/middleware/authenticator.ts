@@ -53,7 +53,6 @@ export const authenticator: RequestHandler = async (req, res, next) => {
     }
 
     if (!req.session.user) {
-      console.log(payload.email);
       let user = await userService.getUserByEmail(payload.email);
       if (!user) {
         const newUserDetails = {

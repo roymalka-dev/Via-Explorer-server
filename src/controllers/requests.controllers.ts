@@ -92,7 +92,7 @@ export const createNewAppRequestController = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const { request } = req.body;
+  const request = req.body;
   const performingUser = req.session.user;
 
   if (!request) {
