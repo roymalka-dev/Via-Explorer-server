@@ -2,6 +2,7 @@ import { validateRequest } from "../../middleware/validator";
 import {
   createNewAppRequestController,
   getAllRequestsController,
+  getRequestByIdController,
   getS3PresignedUrlController,
   removeS3ObjectController,
 } from "../../controllers/requests.controllers";
@@ -100,6 +101,15 @@ export const requestsEndpoints: EndpointType[] = [
     method: "get",
     path: "/get-all-requests",
     controller: getAllRequestsController,
+    middleware: [],
+    authority: "ADMIN",
+  },
+
+  {
+    name: "get request by id ",
+    method: "get",
+    path: "/get-request-by-id/:id",
+    controller: getRequestByIdController,
     middleware: [],
     authority: "ADMIN",
   },

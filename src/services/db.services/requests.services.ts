@@ -34,7 +34,9 @@ export const requestsService = {
     const extension = fileName.split(".").pop();
     const hash = crypto.createHash("sha256");
     hash.update(`${fileName}-${Date.now()}-${Math.random()}`);
-    const hashedFileName = `${hash.digest("hex")}.${extension}`;
+    const hashedFileName = `${hash
+      .digest("hex")
+      .substring(0, 16)}.${extension}`;
 
     const command = new PutObjectCommand({
       Bucket: bucketName,

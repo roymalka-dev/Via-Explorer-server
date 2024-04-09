@@ -137,3 +137,32 @@ export const getAllRequestsController = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+/**
+ * Controller for fetching a single request record by its ID from the system.
+ *
+ * This controller handles an HTTP GET request to retrieve a specific request record by its ID. It extracts
+ * the 'reqtId' parameter from the request's parameters and calls the `getRequestsByIds` service function,
+ * passing an array containing the requested ID. This service function then queries the database for the request
+ * record with the matching ID. If found, the request record is returned in the response with a 200 status code.
+ *
+ * In case of a successful fetch, the function responds with a 200 status code and a JSON object containing
+ * the request record under the 'data' key. If the request record cannot be found, or if an error occurs during
+ * the fetch operation, a 500 status code is returned with an "Internal server error" message.
+ *
+ * @param {Request} req - The Express request object, expected to contain the 'reqtId' parameter in its path.
+ * @param {Response} res - The Express response object used to send back the fetched request record or an error message.
+ */
+export const getRequestByIdController = async (req: Request, res: Response) => {
+  const { id } = req.params;
+  try {
+    const request = await requestsService.getRequestsByIds([id]);
+
+    if (request.length === 0) {
+      return res.status(404).json({ message: "Request not found" });
+    }
+    res.status(200).json({ data: request[0] });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
