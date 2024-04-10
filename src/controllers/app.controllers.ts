@@ -334,6 +334,9 @@ export const searchAppsController: RequestHandler = async (
 ) => {
   try {
     const query = req.query.q?.toString().trim().toLowerCase();
+    if (query.length < 1) {
+      return res.status(200).json({ data: [] });
+    }
 
     console.log("Query:", query);
 
@@ -341,15 +344,6 @@ export const searchAppsController: RequestHandler = async (
       const apps = await appService.searchAppsInDb(query);
       return res.status(200).json({ data: apps });
     }
-
-    const appsIds = await userService.getRecentlyViewed(req.session.user);
-    const apps = await appService.getAppsByIds(appsIds);
-
-    if (apps.length === 0) {
-      return res.status(200).json({ data: [] });
-    }
-
-    res.status(200).json({ data: apps });
   } catch (error) {
     res.status(500).json({ message: "Internal Server Error" });
   }
