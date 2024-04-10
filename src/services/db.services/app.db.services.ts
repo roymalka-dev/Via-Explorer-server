@@ -2,7 +2,7 @@ import { GetItemCommand, ScanCommand } from "@aws-sdk/client-dynamodb";
 import { dynamoDB } from "../../db/db";
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
 import { AppType } from "../../types/app.types";
-import { PutCommand } from "@aws-sdk/lib-dynamodb";
+import { PutCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import axios from "axios";
 
 const tableName = "apps";
@@ -89,7 +89,8 @@ export const appService = {
    */
   getAppsByIds: async (ids: string[]): Promise<AppType[]> => {
     try {
-      const appsPromises = ids.map((id) => appService.getAppById(id));
+      const strictIds = ids.slice(0, 36); // Limit to 36 IDs to avoid exceeding the batch get limit
+      const appsPromises = strictIds.map((id) => appService.getAppById(id));
       const apps = await Promise.all(appsPromises);
 
       // Filter out any null values and ensure TypeScript knows these are AppType
@@ -203,10 +204,12 @@ export const appService = {
   searchAppsInDb: async (query: string): Promise<AppType[]> => {
     const searchParams = {
       TableName: tableName,
-      FilterExpression: "contains(#id, :query) OR contains(#name, :query)",
+      FilterExpression:
+        "contains(#id, :query) OR contains(#name, :query) OR contains(#queryName, :query)",
       ExpressionAttributeNames: {
         "#id": "id",
         "#name": "name",
+        "#queryName": "queryName",
       },
       ExpressionAttributeValues: {
         ":query": { S: query },
@@ -227,5 +230,57 @@ export const appService = {
       console.error("Error searching for app in DB:", error);
       throw error;
     }
+  },
+
+  /**
+   * Updates multiple applications in the DynamoDB table based on the provided array of application data.
+   *
+   * This function iterates over an array of application objects, each representing updates to be made to a specific
+   * application in the DynamoDB table. It constructs a DynamoDB `UpdateCommand` for each application, specifying
+   * the attributes to be updated. The function ensures that the `name` and `id` attributes, which are considered
+   * key attributes, are not modified during the update process.
+   *
+   * The updates are performed asynchronously, and the function waits for all update operations to complete before
+   * resolving. If any of the updates fail, the function will throw an error and terminate the update process.
+   *
+   * @param {AppType[]} apps - An array of `AppType` objects, each containing the `id` of the application to update
+   *                           and the attributes to be updated. The `id` attribute is used to identify the record in
+   *                           the DynamoDB table, and the other attributes are updated accordingly.
+   * @returns {Promise<void>} - A promise that resolves when all updates have been successfully completed. If an error
+   *                            occurs during the update process, the promise will reject with an error.
+   * @throws {Error} - Throws an error if there's an issue performing the update operations in DynamoDB.
+   */
+
+  updateMultipleApps: async (apps: AppType[]): Promise<void> => {
+    console.log("Updating multiple apps...");
+    const updatePromises = apps.map(async (app) => {
+      const { id, ...attributesToUpdate } = app;
+
+      let updateExpression = "SET";
+      let expressionAttributeValues: { [key: string]: any } = {};
+      for (const [key, value] of Object.entries(attributesToUpdate)) {
+        if (key !== "name" && key !== "id") {
+          // Ensure 'name' and 'id' are not updated
+          updateExpression += ` ${key} = :${key},`;
+          expressionAttributeValues[`:${key}`] = value;
+        }
+      }
+
+      // Remove the last comma from the update expression
+      updateExpression = updateExpression.slice(0, -1);
+
+      const params = {
+        TableName: tableName,
+        Key: { id },
+        UpdateExpression: updateExpression,
+        ExpressionAttributeValues: expressionAttributeValues,
+      };
+
+      // Execute the update command
+      return dynamoDB.send(new UpdateCommand(params));
+    });
+
+    // Wait for all the updates to complete
+    await Promise.all(updatePromises);
   },
 };

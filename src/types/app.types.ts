@@ -1,6 +1,7 @@
 export type AppType = {
   id: string;
   name: string;
+  queryName?: string;
   env: string;
   tenant: string;
   city: string;

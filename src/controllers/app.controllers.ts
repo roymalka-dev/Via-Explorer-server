@@ -4,7 +4,7 @@ import { appService } from "../services/db.services/app.db.services";
 import moment from "moment";
 import { userService } from "../services/db.services/users.db.services";
 import { getConfigValue } from "../utils/configurations.utils";
-
+import { Request, Response } from "express";
 /**
  * Retrieves detailed information for a specific application identified by its ID.
  *
@@ -31,7 +31,10 @@ import { getConfigValue } from "../utils/configurations.utils";
  * Responds with a 404 status code if the app is not found, and a 500 status code for internal server errors.
  * Errors during the process are logged to the console for debugging purposes.
  */
-export const getAppController: RequestHandler = async (req, res) => {
+export const getAppController: RequestHandler = async (
+  req: Request,
+  res: Response
+) => {
   const TIME_TO_UPDATE_APP_FROM_STORE_IN_MIN = Number(
     getConfigValue("TIME_TO_UPDATE_APP_FROM_STORE_IN_MIN", 60)
   );
@@ -109,7 +112,10 @@ export const getAppController: RequestHandler = async (req, res) => {
  * Responds with a 404 status code if no apps are found in the database, and a 500 status code for internal server errors.
  * Any errors encountered during the process are logged to the console for debugging purposes.
  */
-export const getAllAppsController: RequestHandler = async (req, res) => {
+export const getAllAppsController: RequestHandler = async (
+  req: Request,
+  res: Response
+) => {
   try {
     const items = await appService.getAllApps();
 
@@ -147,14 +153,16 @@ export const getAllAppsController: RequestHandler = async (req, res) => {
  *
  * Errors are logged to the console and an appropriate HTTP status code and message are returned to the client.
  */
-export const getAppsByIds: RequestHandler = async (req, res) => {
+export const getAppsByIds: RequestHandler = async (
+  req: Request,
+  res: Response
+) => {
   try {
     const { ids } = req.body;
     const apps = await appService.getAppsByIds(ids);
 
     res.json(apps);
   } catch (error) {
-    console.error("Error retrieving apps:", error);
     res
       .status(500)
       .json({ message: "Internal server error", error: error.message });
@@ -188,7 +196,10 @@ export const getAppsByIds: RequestHandler = async (req, res) => {
  * The function responds with a 400 status code if adding the app fails, and a 500 status code for internal server errors.
  * All encountered errors are logged to the console for debugging purposes.
  */
-export const addNewAppController: RequestHandler = async (req, res) => {
+export const addNewAppController: RequestHandler = async (
+  req: Request,
+  res: Response
+) => {
   try {
     let appData: AppType = req.body;
 
@@ -212,7 +223,6 @@ export const addNewAppController: RequestHandler = async (req, res) => {
       res.status(400).json({ message: "Failed to add the app" });
     }
   } catch (error) {
-    console.error("Error adding the app:", error);
     res.status(500).json({ message: "Internal server error", error });
   }
 };
@@ -245,7 +255,10 @@ export const addNewAppController: RequestHandler = async (req, res) => {
  *
  * The function responds with a 500 status code for internal server errors, with each encountered error logged to the console.
  */
-export const addMultipleAppsController: RequestHandler = async (req, res) => {
+export const addMultipleAppsController: RequestHandler = async (
+  req: Request,
+  res: Response
+) => {
   try {
     const appsData: AppType[] = req.body;
 
@@ -281,7 +294,6 @@ export const addMultipleAppsController: RequestHandler = async (req, res) => {
     // Respond with the results for each app
     res.status(200).json(results);
   } catch (error) {
-    console.error("Error adding apps:", error);
     res.status(500).json({ message: "Internal server error", error });
   }
 };
@@ -316,7 +328,10 @@ export const addMultipleAppsController: RequestHandler = async (req, res) => {
  * The function responds with a 500 status code for internal server errors.
  * Errors encountered during the process are logged to the console for debugging purposes.
  */
-export const searchAppsController: RequestHandler = async (req, res) => {
+export const searchAppsController: RequestHandler = async (
+  req: Request,
+  res: Response
+) => {
   try {
     const query = req.query.q?.toString().trim();
 
@@ -334,7 +349,48 @@ export const searchAppsController: RequestHandler = async (req, res) => {
 
     res.status(200).json({ data: apps });
   } catch (error) {
-    console.error("Error in searchAppsController:", error);
     res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+/**
+ * Controller for updating multiple applications in the database.
+ *
+ * This controller receives a request with a JSON body containing an array of application objects.
+ * Each object should include the application ID and the attributes to be updated. The controller
+ * validates the input, extracts the application data, and passes it to the `updateMultipleApps` service
+ * function to perform the update operations in DynamoDB.
+ *
+ * The controller responds with a success message if the updates are completed successfully.
+ * In case of input validation errors or internal errors during the update process, it responds with
+ * an appropriate error message and status code.
+ *
+ * @param req - The HTTP request object, expected to contain an array of application objects in `req.body.apps`.
+ * @param res - The HTTP response object used to send back the response.
+ */
+export const updateMultipleAppsController: RequestHandler = async (
+  req,
+  res
+) => {
+  try {
+    // Validate and extract the apps data from the request body
+    const apps = req.body;
+    if (!apps || !Array.isArray(apps)) {
+      return res
+        .status(400)
+        .json({ message: "Invalid input: apps must be an array." });
+    }
+
+    // Call the service function to update the apps in the DynamoDB table
+    await appService.updateMultipleApps(apps);
+
+    // Respond with a success message
+    res.status(200).json({ message: "Apps updated successfully." });
+  } catch (error) {
+    console.error("Failed to update apps:", error);
+    // Respond with an error message and the appropriate status code
+    res
+      .status(500)
+      .json({ message: "Failed to update apps due to an internal error." });
   }
 };

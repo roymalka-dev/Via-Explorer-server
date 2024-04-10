@@ -12,6 +12,7 @@ import {
   getAppController,
   getAppsByIds,
   searchAppsController,
+  updateMultipleAppsController,
 } from "../../controllers/app.controllers";
 import { EndpointType } from "../../types/routes.types";
 import { validateRequest } from "../../middleware/validator";
@@ -115,5 +116,24 @@ export const appEndpoints: EndpointType[] = [
     controller: searchAppsController,
     middleware: [validateRequest(searchValidationQuerySchema, "query")],
     authority: "USER",
+  },
+
+  /**
+   * Route configuration for updating multiple applications in the database.
+   *
+   * This route allows for batch updating of application data by sending a POST request with a payload
+   * containing an array of application objects. Each object in the array should include the application ID
+   * and the attributes to be updated. The operation is restricted to users with ADMIN authority.
+   *
+   * The route expects no middleware to be applied. In a real-world application, you might want to include
+   * middleware for tasks such as authentication, logging, or request validation.
+   */
+  {
+    name: "update multiple apps",
+    method: "post",
+    path: "/update-multiple-apps",
+    controller: updateMultipleAppsController,
+    middleware: [],
+    authority: "ADMIN",
   },
 ];
