@@ -333,7 +333,9 @@ export const searchAppsController: RequestHandler = async (
   res: Response
 ) => {
   try {
-    const query = req.query.q?.toString().trim();
+    const query = req.query.q?.toString().trim().toLowerCase();
+
+    console.log("Query:", query);
 
     if (query) {
       const apps = await appService.searchAppsInDb(query);
