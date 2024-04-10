@@ -2,7 +2,11 @@ import { GetItemCommand, ScanCommand } from "@aws-sdk/client-dynamodb";
 import { dynamoDB } from "../../db/db";
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
 import { AppType } from "../../types/app.types";
-import { PutCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
+import {
+  PutCommand,
+  UpdateCommand,
+  UpdateCommandInput,
+} from "@aws-sdk/lib-dynamodb";
 import axios from "axios";
 
 const tableName = "apps";
@@ -255,23 +259,37 @@ export const appService = {
       const { id, ...attributesToUpdate } = app;
 
       let updateExpression = "SET";
-      let expressionAttributeValues: { [key: string]: any } = {};
+      let expressionAttributeValues: { [key: string]: any } = {}; // This line remains the same
+      let expressionAttributeNames: { [key: string]: string } = {}; // Specify the type explicitly
+
       for (const [key, value] of Object.entries(attributesToUpdate)) {
         if (key !== "name" && key !== "id") {
           // Ensure 'name' and 'id' are not updated
-          updateExpression += ` ${key} = :${key},`;
-          expressionAttributeValues[`:${key}`] = value;
+          const placeholder = `:${key}`;
+          let expressionKey = key;
+
+          // Check if the attribute is 'region' and use a placeholder if so
+          if (key === "region") {
+            expressionKey = "#region";
+            expressionAttributeNames["#region"] = "region";
+          }
+
+          updateExpression += ` ${expressionKey} = ${placeholder},`;
+          expressionAttributeValues[placeholder] = value;
         }
       }
 
       // Remove the last comma from the update expression
       updateExpression = updateExpression.slice(0, -1);
 
-      const params = {
+      const params: UpdateCommandInput = {
         TableName: tableName,
         Key: { id },
         UpdateExpression: updateExpression,
         ExpressionAttributeValues: expressionAttributeValues,
+        ...(Object.keys(expressionAttributeNames).length > 0 && {
+          ExpressionAttributeNames: expressionAttributeNames,
+        }),
       };
 
       // Execute the update command
