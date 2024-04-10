@@ -207,7 +207,6 @@ export const appService = {
       FilterExpression: "contains(#id, :query) OR contains(#queryName, :query)",
       ExpressionAttributeNames: {
         "#id": "id",
-        "#name": "name",
         "#queryName": "queryName",
       },
       ExpressionAttributeValues: {
