@@ -4,6 +4,7 @@ import {
   appsByIdsValidationBodySchema,
   multipleAppsValidationBodySchema,
   searchValidationQuerySchema,
+  updateAppValidationBodySchema,
 } from "../../validations/app.validations";
 import {
   addMultipleAppsController,
@@ -12,6 +13,7 @@ import {
   getAppController,
   getAppsByIds,
   searchAppsController,
+  updateAppController,
   updateMultipleAppsController,
 } from "../../controllers/app.controllers";
 import { EndpointType } from "../../types/routes.types";
@@ -36,6 +38,22 @@ export const appEndpoints: EndpointType[] = [
     controller: addNewAppController,
     middleware: [validateRequest(appValidationBodySchema, "body")],
     authority: "USER",
+  },
+
+  /**
+   * Endpoint for updating an existing app.
+   * This endpoint expects a PUT request with the updated app data in the body.
+   * It uses the `updateAppController` to handle the request logic.
+   * No request validation middleware is required.
+   * Requires ADMIN authority level to access.
+   */
+  {
+    name: "update app",
+    method: "put",
+    path: "/update-app",
+    controller: updateAppController,
+    middleware: [validateRequest(updateAppValidationBodySchema, "body")],
+    authority: "ADMIN",
   },
 
   /**

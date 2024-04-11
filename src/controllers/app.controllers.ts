@@ -131,6 +131,49 @@ export const getAllAppsController: RequestHandler = async (
 };
 
 /**
+ * Updates an application in the database.
+ *
+ * This controller handles an HTTP PUT request containing the updated application data in the request body.
+ * It first checks if the requested app exists in the database. If the app is found, it updates the app's details
+ * with the provided data and saves the changes back to the database.
+ *
+ * The controller responds with a success message if the update is completed successfully.
+ * If the app is not found, it responds with a 404 status code and a message indicating the app was not found.
+ * In case of internal server errors during the update process, it responds with a 500 status code and an error message.
+ *
+ * @param {Request} req - The Express request object, containing the updated app data in the body.
+ * @param {Response} res - The Express response object used for sending back a success message or an error message.
+ *
+ * Successful response format:
+ * {
+ *   "message": "App updated successfully"
+ * }
+ *
+ * Responds with a 404 status code if the app is not found, and a 500 status code for internal server errors.
+ * Errors encountered during the process are logged to the console for debugging purposes.
+ */
+export const updateAppController: RequestHandler = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const appData = req.body;
+
+    const app = await appService.getAppById(appData.id);
+
+    if (!app) {
+      return res.status(404).json({ message: "App not found" });
+    }
+
+    await appService.updateMultipleApps([appData]);
+
+    res.status(200).json({ message: "App updated successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error", error });
+  }
+};
+
+/**
  * Retrieves a list of applications based on an array of provided IDs.
  *
  * This controller handles a POST request where the body contains an array of application IDs.

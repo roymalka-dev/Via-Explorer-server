@@ -14,6 +14,20 @@ export const appValidationBodySchema = yup.object().shape({
   imageUrl: yup.string().optional(),
 });
 
+export const updateAppValidationBodySchema = yup.object().shape({
+  id: yup.string().required("ID is required"),
+  name: yup.string().required("Name is required"),
+  city: yup.string().required("City name is required"),
+  country: yup.string().required("Country is required"),
+  region: yup.string().optional(),
+  iosFolder: yup.string().nullable(),
+  androidFolder: yup.string().nullable(),
+  colorSpecs: yup.string().nullable(),
+  figmaAppName: yup.string().nullable(),
+  webAppFigmaLink: yup.string().url("Must be a valid URL").nullable(),
+  webAppLink: yup.string().url("Must be a valid URL").nullable(),
+});
+
 export const appValidationParamsSchema = yup.object().shape({
   id: yup.string().required("ID is required"),
 });

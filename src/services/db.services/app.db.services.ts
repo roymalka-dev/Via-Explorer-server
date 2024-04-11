@@ -239,7 +239,7 @@ export const appService = {
    *
    * This function iterates over an array of application objects, each representing updates to be made to a specific
    * application in the DynamoDB table. It constructs a DynamoDB `UpdateCommand` for each application, specifying
-   * the attributes to be updated. The function ensures that the `name` and `id` attributes, which are considered
+   * the attributes to be updated. The function ensures that `id` attribute, which are considered
    * key attributes, are not modified during the update process.
    *
    * The updates are performed asynchronously, and the function waits for all update operations to complete before
@@ -263,15 +263,17 @@ export const appService = {
       let expressionAttributeNames: { [key: string]: string } = {}; // Specify the type explicitly
 
       for (const [key, value] of Object.entries(attributesToUpdate)) {
-        if (key !== "name" && key !== "id") {
-          // Ensure 'name' and 'id' are not updated
+        if (key !== "id") {
           const placeholder = `:${key}`;
           let expressionKey = key;
 
-          // Check if the attribute is 'region' and use a placeholder if so
           if (key === "region") {
             expressionKey = "#region";
             expressionAttributeNames["#region"] = "region";
+          }
+          if (key === "name") {
+            expressionKey = "#name";
+            expressionAttributeNames["#name"] = "name";
           }
 
           updateExpression += ` ${expressionKey} = ${placeholder},`;
