@@ -1,3 +1,8 @@
+export type appBuildVersionType = {
+  version: string;
+  link: string;
+};
+
 export type AppType = {
   id: string;
   name: string;
@@ -11,13 +16,13 @@ export type AppType = {
   iosLink?: string;
   iosRelease?: string;
   iosFolder?: string;
-  iosBuilds?: string[];
+  iosBuilds?: appBuildVersionType[];
   iosScreenshots?: string[];
   androidVersion?: string;
   androidRelease?: string;
   androidFolder?: string;
   androidLink?: string;
-  androidBuilds?: string[];
+  androidBuilds?: appBuildVersionType[];
   androidScreenshots?: string[];
   languages?: string[];
   colorSpecs?: string;
