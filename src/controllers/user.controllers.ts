@@ -69,6 +69,39 @@ export const getAllUsersController: RequestHandler = async (
 };
 
 /**
+ * Controller for editing user details based on provided email and role.
+ * It processes the incoming request which should contain the user's email and new role within the body.
+ * If the email is not provided, it responds with a 400 status code indicating a bad request.
+ * On successful update, it returns the updated user data with a 200 status code.
+ * If an error occurs during the update process, it logs the error and returns a 500 status code with an error message.
+ *
+ * @param {Request} req - The Express.js request object, expected to have a body containing 'email' and 'role'.
+ * @param {Response} res - The Express.js response object used for sending back responses to the client.
+ * @throws {Error} - Logs and sends a server error response if updating the user fails.
+ */
+export const editUserDetailsController: RequestHandler = async (
+  req: Request,
+  res: Response
+) => {
+  try {
+    const { email, role } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: "User email is required." });
+    }
+
+    const user = await userService.updateUser(email, role);
+
+    res.status(200).json({ data: user });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .json({ message: "An error occurred while fetching user details." });
+  }
+};
+
+/**
  * Controller for fetching and returning a list of a user's favorite items.
  *
  * This controller first validates the presence of the user's email in the session data to ensure the request is authenticated.

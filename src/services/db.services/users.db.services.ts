@@ -8,6 +8,7 @@ import { dynamoDB } from "../../db/db";
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
 import { getConfigValue } from "../../utils/configurations.utils";
 import { requestsService } from "./requests.services";
+import { UpdateCommand } from "@aws-sdk/lib-dynamodb";
 
 const TableName = "users";
 
@@ -139,6 +140,42 @@ export const userService = {
     }
 
     return user;
+  },
+
+  /**
+   * Updates the role of a specific user in the DynamoDB table.
+   *
+   * This function modifies the 'authorization' attribute of a user record identified by email. It sets the authorization level
+   * to the new role provided in the function arguments. The function constructs and sends an UpdateCommand to DynamoDB and
+   * returns the response from the database.
+   *
+   * @param {string} email - The email of the user whose role is to be updated.
+   * @param {any} role - The new role to be assigned to the user.
+   * @returns {Promise<object>} - The result object from DynamoDB if the update is successful.
+   * @throws {Error} - Throws an error if the update operation fails.
+   */
+
+  async updateUser(email: string, role: any) {
+    const params = {
+      TableName,
+      Key: { email },
+      UpdateExpression: "SET #auth = :authValue",
+      ExpressionAttributeNames: {
+        "#auth": "authorization",
+      },
+      ExpressionAttributeValues: {
+        ":authValue": role,
+      },
+    };
+
+    try {
+      const command = new UpdateCommand(params);
+      const result = await dynamoDB.send(command);
+      return result;
+    } catch (error) {
+      console.error("Failed to update user:", error);
+      throw error;
+    }
   },
 
   /**

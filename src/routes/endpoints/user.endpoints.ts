@@ -1,5 +1,6 @@
 import { validateRequest } from "../../middleware/validator";
 import {
+  editUserDetailsController,
   getAllUsersController,
   getUserDetailsController,
   getUserFavoritesController,
@@ -33,6 +34,25 @@ export const userEndpoints: EndpointType[] = [
     middleware: [],
     authority: "USER",
   },
+
+  /**
+   * Endpoint configuration for editing user details.
+   *
+   * This PUT endpoint allows administrators to update user information. The request requires authentication and authorization,
+   * with access restricted to users having 'ADMIN' authority. It processes user updates through the `editUserDetailsController`,
+   * which handles data validation and database interactions.
+   * Path: "/edit-user"
+   * Authority Required: "ADMIN"
+   */
+  {
+    name: "edit user details",
+    method: "put",
+    path: "/edit-user",
+    controller: editUserDetailsController,
+    middleware: [],
+    authority: "ADMIN",
+  },
+
   /**
    * Endpoint configuration for retrieving a list of all users in the system.
    *
