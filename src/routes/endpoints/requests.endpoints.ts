@@ -5,6 +5,7 @@ import {
   getRequestByIdController,
   getS3PresignedUrlController,
   removeS3ObjectController,
+  updateRequestStatusByIdController,
 } from "../../controllers/requests.controllers";
 import { EndpointType } from "../../types/routes.types";
 import {
@@ -105,11 +106,36 @@ export const requestsEndpoints: EndpointType[] = [
     authority: "ADMIN",
   },
 
+  /**
+   * Endpoint for retrieving a request by its ID.
+   * This endpoint expects a GET request with the `id` parameter in the URL to specify the ID of the request to retrieve.
+   * It uses the `getRequestByIdController` to handle the logic for fetching the request record based on the provided ID.
+   * The ID parameter is used to query the database for the specific request record.
+   * If the record is found, it is returned in the response with a 200 status code.
+   * If the record is not found or an error occurs during the fetch operation, a 500 status code is returned.
+   * Requires ADMIN authority level to access, ensuring that only users with administrative privileges can retrieve request records by ID.
+   */
   {
     name: "get request by id ",
     method: "get",
     path: "/get-request-by-id/:id",
     controller: getRequestByIdController,
+    middleware: [],
+    authority: "ADMIN",
+  },
+
+  /**
+   * Endpoint for updating the status of a request by its ID.
+   * This endpoint expects a PUT request with the `requestId` and `status` parameters in the request body.
+   * It uses the `updateRequestStatusByIdController` to handle the logic for updating the status of the request.
+   * The request ID and the new status are provided in the request body to identify the request and set the new status.
+   * Access to this endpoint is restricted to users with 'ADMIN' authority level, ensuring that only administrators can update request statuses.
+   */
+  {
+    name: "update request status ",
+    method: "put",
+    path: "/update-request-status",
+    controller: updateRequestStatusByIdController,
     middleware: [],
     authority: "ADMIN",
   },

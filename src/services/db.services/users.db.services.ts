@@ -154,7 +154,6 @@ export const userService = {
    * @returns {Promise<object>} - The result object from DynamoDB if the update is successful.
    * @throws {Error} - Throws an error if the update operation fails.
    */
-
   async updateUser(email: string, role: any) {
     const params = {
       TableName,

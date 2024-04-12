@@ -3,7 +3,7 @@ import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { dynamoDB, s3Client } from "../../db/db";
 import crypto from "crypto";
 import { AppRequestType } from "../../types/request.types";
-import { PutCommand } from "@aws-sdk/lib-dynamodb";
+import { PutCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
 import { BatchGetItemCommand, ScanCommand } from "@aws-sdk/client-dynamodb";
 import { unmarshall } from "@aws-sdk/util-dynamodb";
 
@@ -212,6 +212,58 @@ export const requestsService = {
 
       return [];
     } catch (error) {
+      throw error;
+    }
+  },
+
+  /**
+   * Asynchronously updates the status of a specific item in the DynamoDB table.
+   *
+   * @async
+   * @function updateRequestStatus
+   * @param {string} id - The unique identifier of the item to update.
+   * @param {string} status - The new status to be set for the item.
+   * @param {string} tableName - The name of the DynamoDB table where the item is stored.
+   * @description
+   * This function constructs and sends an update command to DynamoDB to modify the status of an item identified by `id`.
+   * The update operation targets the 'status' attribute of the item.
+   *
+   * The function uses AWS SDK's DynamoDB Document Client to send an UpdateCommand, which is built with:
+   *  - `TableName` to specify which table to update.
+   *  - `Key` to identify the specific item by its `id`.
+   *  - `UpdateExpression` to define the attribute to update and the new value.
+   *  - `ExpressionAttributeNames` to safely reference attributes that might conflict with DynamoDB reserved words.
+   *  - `ExpressionAttributeValues` to define the values used in the update expression.
+   *
+   * This function will log and rethrow any errors encountered during the update operation.
+   *
+   * @example
+   * // Call updateRequestStatus with a request ID and a new status
+   * updateRequestStatus('abc123', 'completed', 'RequestsTable')
+   *   .then(() => console.log('Update successful'))
+   *   .catch(error => console.error('Update failed', error));
+   *
+   * @returns {Promise<void>} A promise that resolves when the update operation is successful and rejects if an error occurs.
+   */
+  updateRequestStatus: async (id: string, status: string) => {
+    const params = {
+      TableName: tableName,
+      Key: {
+        id,
+      },
+      UpdateExpression: "SET #status = :status",
+      ExpressionAttributeNames: {
+        "#status": "status",
+      },
+      ExpressionAttributeValues: {
+        ":status": status,
+      },
+    };
+
+    try {
+      await dynamoDB.send(new UpdateCommand(params));
+    } catch (error) {
+      console.error("Error updating item:", error);
       throw error;
     }
   },

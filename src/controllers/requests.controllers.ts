@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, RequestHandler, Response } from "express";
 import { requestsService } from "../services/db.services/requests.services";
 import { userService } from "../services/db.services/users.db.services";
 /**
@@ -162,6 +162,62 @@ export const getRequestByIdController = async (req: Request, res: Response) => {
       return res.status(404).json({ message: "Request not found" });
     }
     res.status(200).json({ data: request[0] });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+/**
+ * Updates the status of a request by its ID.
+ *
+ * @module updateRequestStatusByIdController
+ * @function
+ * @param {Request} req - The express request object, which includes:
+ *   - requestId (string): The ID of the request to be updated.
+ *   - status (string): The new status to set for the request.
+ * @param {Response} res - The express response object used to send back a response.
+ *
+ * @description
+ * This controller handles a PUT request to update the status of a request based on its unique ID.
+ * The requestId and the new status are expected to be provided in the request body.
+ * It leverages the `requestsService.updateRequestStatus` function to perform the update operation.
+ *
+ * On success, it sends a JSON response with a 200 status code and the updated request data.
+ * On failure, due to any internal errors, it sends a 500 status code with an error message.
+ *
+ * @example
+ * PUT /api/requests/update-status
+ * Request body:
+ * {
+ *   "requestId": "12345",
+ *   "status": "completed"
+ * }
+ * Successful response:
+ * {
+ *   "data": {
+ *     "requestId": "12345",
+ *     "status": "completed"
+ *   }
+ * }
+ * Error response:
+ * {
+ *   "message": "Internal server error"
+ * }
+ *
+ * @returns {void}
+ */
+export const updateRequestStatusByIdController: RequestHandler = async (
+  req: Request,
+  res: Response
+) => {
+  const { requestId, status } = req.body;
+
+  try {
+    const updatedRequest = await requestsService.updateRequestStatus(
+      requestId,
+      status
+    );
+    res.status(200).json({ data: updatedRequest });
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
   }
