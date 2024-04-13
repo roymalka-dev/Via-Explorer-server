@@ -1,6 +1,7 @@
 import { validateRequest } from "../../middleware/validator";
 import {
   createNewAppRequestController,
+  deleteRequestByIdController,
   getAllRequestsController,
   getRequestByIdController,
   getS3PresignedUrlController,
@@ -136,6 +137,24 @@ export const requestsEndpoints: EndpointType[] = [
     method: "put",
     path: "/update-request-status",
     controller: updateRequestStatusByIdController,
+    middleware: [],
+    authority: "ADMIN",
+  },
+
+  /**
+   * Endpoint for deleting a request by its ID.
+   * This endpoint expects a DELETE request with the `id` parameter in the URL to specify the ID of the request to delete.
+   * It uses the `deleteRequestByIdController` to handle the logic for deleting the request record based on the provided ID.
+   * The ID parameter is used to identify the request record to be deleted from the system.
+   * If the record is successfully deleted, a 200 status code is returned.
+   * If the record is not found or an error occurs during the delete operation, a 500 status code is returned.
+   * Requires ADMIN authority level to access, ensuring that only users with administrative privileges can delete request records by ID.
+   */
+  {
+    name: "delete request",
+    method: "delete",
+    path: "/delete-request/:id",
+    controller: deleteRequestByIdController,
     middleware: [],
     authority: "ADMIN",
   },

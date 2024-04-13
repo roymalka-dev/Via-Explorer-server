@@ -3,7 +3,11 @@ import { DeleteObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
 import { dynamoDB, s3Client } from "../../db/db";
 import crypto from "crypto";
 import { AppRequestType } from "../../types/request.types";
-import { PutCommand, UpdateCommand } from "@aws-sdk/lib-dynamodb";
+import {
+  DeleteCommand,
+  PutCommand,
+  UpdateCommand,
+} from "@aws-sdk/lib-dynamodb";
 import { BatchGetItemCommand, ScanCommand } from "@aws-sdk/client-dynamodb";
 import { unmarshall } from "@aws-sdk/util-dynamodb";
 
@@ -264,6 +268,50 @@ export const requestsService = {
       await dynamoDB.send(new UpdateCommand(params));
     } catch (error) {
       console.error("Error updating item:", error);
+      throw error;
+    }
+  },
+
+  /**
+   * Deletes a specific request by its ID from DynamoDB and associated images from an S3 bucket.
+   *
+   * This function first retrieves the request details from DynamoDB to find associated images.
+   * It then deletes each image from the specified S3 bucket and finally deletes the request record from DynamoDB.
+   * All operations are performed asynchronously and are awaited to ensure complete execution before proceeding.
+   *
+   * @param {string} id - The unique identifier of the request to be deleted.
+   * @throws {Error} Throws an error if any of the AWS operations fail.
+   */
+  deleteRequestById: async (id: string) => {
+    try {
+      const request = await requestsService.getRequestsByIds([id]);
+      const images = [
+        request[0].VehicleOptionImage,
+        request[0].serviceLogoImage,
+        request[0].skylineImage,
+      ];
+
+      // Delete images from S3
+      for (const image of images) {
+        if (image) {
+          const fileName = image.split("/").pop();
+          await requestsService.removeS3Object(
+            "via-explorer-requests",
+            fileName
+          );
+        }
+      }
+
+      // Delete the item from DynamoDB
+      const params = {
+        TableName: tableName,
+        Key: {
+          id,
+        },
+      };
+      await dynamoDB.send(new DeleteCommand(params));
+    } catch (error) {
+      console.error("Error deleting item:", error);
       throw error;
     }
   },

@@ -222,3 +222,41 @@ export const updateRequestStatusByIdController: RequestHandler = async (
     res.status(500).json({ message: "Internal server error" });
   }
 };
+
+/**
+ * Controller for deleting a request by its ID from the database.
+ * This endpoint handles DELETE requests to remove a specific request
+ * based on the provided ID. It leverages the `requestsService.deleteRequestById`
+ * to perform the deletion operation.
+ *
+ * @module RequestControllers
+ * @function deleteRequestByIdController
+ * @param {Request} req - The Express request object, which contains:
+ *  - params: An object with the request parameters where `id` is the ID of the request to be deleted.
+ * @param {Response} res - The Express response object used to send back the HTTP response.
+ * @returns {void} This function does not return anything. It sends a JSON response with either a success or error message.
+ *
+ * @example
+ * DELETE /api/requests/{id}
+ * Response:
+ *  Success: 200 OK { message: "Request deleted successfully" }
+ *  Error: 500 Internal Server Error { message: "Internal server error" }
+ *
+ * @description
+ * This controller validates that an ID is provided and then attempts to delete the corresponding
+ * request from the database. If the deletion is successful, it responds with a 200 status code and a success message.
+ * If the deletion fails, it catches any thrown errors, logs them, and responds with a 500 status code and an error message.
+ */
+export const deleteRequestByIdController: RequestHandler = async (
+  req: Request,
+  res: Response
+) => {
+  const { id } = req.params;
+
+  try {
+    await requestsService.deleteRequestById(id);
+    res.status(200).json({ message: "Request deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
