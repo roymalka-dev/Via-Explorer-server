@@ -35,3 +35,31 @@ export const getAllConfigurations: RequestHandler = async (req, res) => {
       .json({ message: "Internal server error", error: error.message });
   }
 };
+
+export const editConfigurationValueController: RequestHandler = async (
+  req,
+  res
+) => {
+  const { key, value } = req.body;
+
+  try {
+    const success = await configurationsService.editConfigurationValue(
+      key,
+      value
+    );
+
+    if (success) {
+      res.status(200).json({
+        message: "Configuration value updated successfully",
+      });
+    } else {
+      res.status(404).json({
+        message: "Configuration key not found",
+      });
+    }
+  } catch (error) {
+    res
+      .status(500)
+      .json({ message: "Internal server error", error: error.message });
+  }
+};

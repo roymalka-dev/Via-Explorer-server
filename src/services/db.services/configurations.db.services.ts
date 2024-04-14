@@ -1,6 +1,7 @@
 import { ConfigurationItem } from "types/configurations.types";
 import { dynamoDB } from "../../db/db";
 import { ScanCommand } from "@aws-sdk/client-dynamodb";
+import { UpdateCommand } from "@aws-sdk/lib-dynamodb";
 
 const tableName = "configurations";
 
@@ -36,6 +37,39 @@ export const configurationsService = {
       return configurations;
     } catch (error) {
       console.error("Error retrieving server configurations:", error);
+      throw error;
+    }
+  },
+
+  /**
+   * Updates a configuration value in DynamoDB.
+   *
+   * @param {string} key - The key of the configuration to update.
+   * @param {string} value - The new value to set for the configuration.
+   * @returns {Promise<boolean>} - Returns true if the update was successful.
+   * @throws {Error} - Throws an error if the update operation fails.
+   */
+  editConfigurationValue: async (
+    key: string,
+    value: string | number | boolean
+  ): Promise<boolean> => {
+    const params = {
+      TableName: tableName,
+      Key: { name: key },
+      UpdateExpression: "SET #value = :newValue",
+      ExpressionAttributeNames: {
+        "#value": "value",
+      },
+      ExpressionAttributeValues: {
+        ":newValue": value,
+      },
+    };
+    try {
+      const command = new UpdateCommand(params);
+      await dynamoDB.send(command);
+
+      return true;
+    } catch (error) {
       throw error;
     }
   },
