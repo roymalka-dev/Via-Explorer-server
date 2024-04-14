@@ -10,6 +10,7 @@ import {
 } from "@aws-sdk/lib-dynamodb";
 import { BatchGetItemCommand, ScanCommand } from "@aws-sdk/client-dynamodb";
 import { unmarshall } from "@aws-sdk/util-dynamodb";
+import { userService } from "./users.db.services";
 
 const tableName = "requests";
 
@@ -285,6 +286,7 @@ export const requestsService = {
   deleteRequestById: async (id: string) => {
     try {
       const request = await requestsService.getRequestsByIds([id]);
+
       const images = [
         request[0].VehicleOptionImage,
         request[0].serviceLogoImage,
@@ -301,6 +303,10 @@ export const requestsService = {
           );
         }
       }
+
+      //delte request id from user list
+
+      await userService.deleteUserRequest(request[0].performingUser, id);
 
       // Delete the item from DynamoDB
       const params = {

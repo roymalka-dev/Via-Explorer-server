@@ -78,7 +78,6 @@ export const userService = {
     const item = marshall({
       ...userDetails,
       favorites: userDetails.favorites || [],
-      requests: userDetails.requests || [],
     });
 
     await dynamoDB.send(
@@ -403,6 +402,35 @@ export const userService = {
 
       const requests = await requestsService.getRequestsByIds(requestIds);
       return requests;
+    } catch (error) {
+      throw error;
+    }
+  },
+
+  /**
+   * Removes a specified request ID from the user's request set in DynamoDB.
+   *
+   * @param {string} email - The email address of the user, used as the key to identify the user in the table.
+   * @param {string} reqId - The request ID to be removed from the user's request set.
+   * @returns {Promise<Object>} A promise that resolves with the result of the update operation.
+   * @throws {Error} Throws an error if the update operation fails.
+   */
+  async deleteUserRequest(email: string, reqId: string) {
+    const params = {
+      TableName: TableName,
+      Key: {
+        email: { S: email },
+      },
+      UpdateExpression: "DELETE requests :reqId",
+      ExpressionAttributeValues: {
+        ":reqId": { SS: [reqId] }, // SS denotes String Set
+      },
+    };
+
+    try {
+      const command = new UpdateItemCommand(params);
+      const response = await dynamoDB.send(command);
+      return response;
     } catch (error) {
       throw error;
     }
