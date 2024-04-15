@@ -6,6 +6,7 @@ import session from "express-session";
 import helmet from "helmet";
 import { getConfigValue } from "../utils/configurations.utils";
 import dotenv from "dotenv";
+
 dotenv.config();
 
 export const serverConfig = (server: Application) => {
