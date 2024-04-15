@@ -31,4 +31,6 @@ export type AppType = {
   webAppLink?: string;
   lastStoreUpdate?: number;
   imageUrl?: string;
+  pso?: string;
+  psm?: string;
 };

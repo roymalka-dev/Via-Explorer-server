@@ -254,51 +254,57 @@ export const appService = {
    */
 
   updateMultipleApps: async (apps: AppType[]): Promise<void> => {
-    console.log("Updating multiple apps...");
-    const updatePromises = apps.map(async (app) => {
-      const { id, ...attributesToUpdate } = app;
+    try {
+      const delayIncrement = 900000 / 100; // 15 minutes divided by 100
+      let delay = 0;
 
-      let updateExpression = "SET";
-      let expressionAttributeValues: { [key: string]: any } = {}; // This line remains the same
-      let expressionAttributeNames: { [key: string]: string } = {}; // Specify the type explicitly
+      const updatePromises = apps.map(async (app) => {
+        await new Promise((resolve) => setTimeout(resolve, delay));
+        delay += delayIncrement;
 
-      for (const [key, value] of Object.entries(attributesToUpdate)) {
-        if (key !== "id") {
-          const placeholder = `:${key}`;
-          let expressionKey = key;
+        const { id, ...attributesToUpdate } = app;
 
-          if (key === "region") {
-            expressionKey = "#region";
-            expressionAttributeNames["#region"] = "region";
+        let updateExpression = "SET";
+        let expressionAttributeValues: { [key: string]: any } = {};
+        let expressionAttributeNames: { [key: string]: string } = {};
+
+        for (const [key, value] of Object.entries(attributesToUpdate)) {
+          if (key !== "id") {
+            const placeholder = `:${key}`;
+            let expressionKey = key;
+
+            if (key === "region") {
+              expressionKey = "#region";
+              expressionAttributeNames["#region"] = "region";
+            }
+            if (key === "name") {
+              expressionKey = "#name";
+              expressionAttributeNames["#name"] = "name";
+            }
+
+            updateExpression += ` ${expressionKey} = ${placeholder},`;
+            expressionAttributeValues[placeholder] = value;
           }
-          if (key === "name") {
-            expressionKey = "#name";
-            expressionAttributeNames["#name"] = "name";
-          }
-
-          updateExpression += ` ${expressionKey} = ${placeholder},`;
-          expressionAttributeValues[placeholder] = value;
         }
-      }
 
-      // Remove the last comma from the update expression
-      updateExpression = updateExpression.slice(0, -1);
+        updateExpression = updateExpression.slice(0, -1);
 
-      const params: UpdateCommandInput = {
-        TableName: tableName,
-        Key: { id },
-        UpdateExpression: updateExpression,
-        ExpressionAttributeValues: expressionAttributeValues,
-        ...(Object.keys(expressionAttributeNames).length > 0 && {
-          ExpressionAttributeNames: expressionAttributeNames,
-        }),
-      };
+        const params: UpdateCommandInput = {
+          TableName: tableName,
+          Key: { id },
+          UpdateExpression: updateExpression,
+          ExpressionAttributeValues: expressionAttributeValues,
+          ...(Object.keys(expressionAttributeNames).length > 0 && {
+            ExpressionAttributeNames: expressionAttributeNames,
+          }),
+        };
 
-      // Execute the update command
-      return dynamoDB.send(new UpdateCommand(params));
-    });
+        return dynamoDB.send(new UpdateCommand(params));
+      });
 
-    // Wait for all the updates to complete
-    await Promise.all(updatePromises);
+      await Promise.all(updatePromises);
+    } catch (error) {
+      throw error;
+    }
   },
 };

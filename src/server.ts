@@ -4,6 +4,7 @@ import { router } from "./routes/router";
 import dotenv from "dotenv";
 import { setConfigurations } from "./utils/configurations.utils";
 import { routes } from "./routes/routes";
+import { startScheduler } from "./process/scheduler";
 
 dotenv.config();
 const port = Number(process.env.PORT || 3000);
@@ -25,5 +26,6 @@ server.get("/", (req, res) => {
 setConfigurations().then(() => {
   server.listen(port, hostname, () => {
     console.log(`Server is running on  ${hostname}:${port}`);
+    startScheduler();
   });
 });
