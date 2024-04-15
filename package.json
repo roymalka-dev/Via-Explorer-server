@@ -8,7 +8,7 @@
   "scripts": {
     "start": "node dist/server.js",
     "dev": "nodemon",
-    "build": "tsc --max-old-space-size=4096",
+    "build": "tsc",
     "test": "node --experimental-vm-modules node_modules/.bin/jest"
   },
   "keywords": [],
