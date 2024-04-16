@@ -4,6 +4,7 @@ import { configurationsEndpoints } from "./endpoints/configurations.endpoints";
 import { requestsEndpoints } from "./endpoints/requests.endpoints";
 import { userEndpoints } from "./endpoints/user.endpoints";
 import { RouteType } from "../types/routes.types";
+import { redisGetRequestCache } from "../middleware/redis";
 
 export const routes: RouteType[] = [
   /**
@@ -15,7 +16,7 @@ export const routes: RouteType[] = [
     name: "app",
     path: "/app",
     endpoints: appEndpoints,
-    middleware: [authenticator],
+    middleware: [authenticator, redisGetRequestCache],
   },
 
   /**
@@ -27,7 +28,7 @@ export const routes: RouteType[] = [
     name: "user",
     path: "/user",
     endpoints: userEndpoints,
-    middleware: [authenticator],
+    middleware: [authenticator, redisGetRequestCache],
   },
   /**
    * Route configuration for handling various requests, prefixed with '/requests'.
@@ -38,7 +39,7 @@ export const routes: RouteType[] = [
     name: "requests",
     path: "/requests",
     endpoints: requestsEndpoints,
-    middleware: [authenticator],
+    middleware: [authenticator, redisGetRequestCache],
   },
   /**
    * Route configuration for the 'configurations' section of the API.
@@ -49,6 +50,6 @@ export const routes: RouteType[] = [
     name: "configurations",
     path: "/configurations",
     endpoints: configurationsEndpoints,
-    middleware: [authenticator],
+    middleware: [authenticator, redisGetRequestCache],
   },
 ];

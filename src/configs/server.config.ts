@@ -6,6 +6,7 @@ import session from "express-session";
 import helmet from "helmet";
 import { getConfigValue } from "../utils/configurations.utils";
 import dotenv from "dotenv";
+import { startRedisClient } from "../db/redis";
 dotenv.config();
 
 export const serverConfig = (server: Application) => {
@@ -35,6 +36,8 @@ export const serverConfig = (server: Application) => {
       origin: "*",
     })
   );
+
+  startRedisClient();
 
   /*
   server.use(
