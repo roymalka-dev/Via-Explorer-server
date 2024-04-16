@@ -28,7 +28,7 @@ export const routes: RouteType[] = [
     name: "user",
     path: "/user",
     endpoints: userEndpoints,
-    middleware: [authenticator, redisGetRequestCache],
+    middleware: [authenticator],
   },
   /**
    * Route configuration for handling various requests, prefixed with '/requests'.
