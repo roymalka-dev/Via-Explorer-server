@@ -68,6 +68,7 @@ export const getAppController: RequestHandler = async (
         item.iosVersion = appStoreData.version;
         item.iosRelease = appStoreData.releaseDate;
         item.iosScreenshots = appStoreData.screenshotUrls;
+        item.languages = appStoreData.languageCodesISO2A;
       }
 
       if (playSotreData) {
