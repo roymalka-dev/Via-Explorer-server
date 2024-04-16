@@ -162,7 +162,7 @@ export const appService = {
       const encodedAppName = encodeURIComponent(appName);
 
       if (store === "appstore") {
-        const url = `https://itunes.apple.com/search?term=${encodedAppName}&entity=software`;
+        const url = `https://itunes.apple.com/search?term=${encodedAppName}&entity=software&sellerName=Via+Transportation`;
         const response = await axios.get(url);
         const app = response.data.results[0];
         return app;
@@ -189,6 +189,7 @@ export const appService = {
       return null;
     }
   },
+
   /**
    * Searches for applications in the DynamoDB table based on a given query string.
    *
