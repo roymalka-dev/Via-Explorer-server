@@ -54,7 +54,7 @@ export const appRequestValidationBodySchema = yup.object().shape({
   VehicleOptionImage: yup.string(),
   preferredBrandColor: yup.string(),
   chooseBrandColorFromLogo: yup
-    .boolean()
+    .string()
     .required("Choose brand color from logo flag is required."),
   additionalInformation: yup.array().of(yup.string()),
 });
