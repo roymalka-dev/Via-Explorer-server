@@ -55,6 +55,12 @@ export const authenticator: RequestHandler = async (req, res, next) => {
     if (!req.session.user) {
       let user = await userService.getUserByEmail(payload.email);
       if (!user) {
+        const payloadEmail = payload.email.split("@")[1];
+
+        if (payloadEmail !== "ridewithvia.com") {
+          throw new Error("Unauthorized domain");
+        }
+
         const newUserDetails = {
           email: payload.email,
           authorization: "USER",

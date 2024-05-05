@@ -209,10 +209,12 @@ export const appService = {
   searchAppsInDb: async (query: string): Promise<AppType[]> => {
     const searchParams = {
       TableName: tableName,
-      FilterExpression: "contains(#id, :query) OR contains(#queryName, :query)",
+      FilterExpression:
+        "contains(#id, :query) OR contains(#queryName, :query) OR contains(#tenant, :query)",
       ExpressionAttributeNames: {
         "#id": "id",
         "#queryName": "queryName",
+        "#tenant": "tenant",
       },
       ExpressionAttributeValues: {
         ":query": { S: query },
