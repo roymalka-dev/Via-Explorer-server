@@ -374,13 +374,16 @@ export const appControllers = {
         }
       }
 
-      const formattedApps = apps.map((app) => {
-        return {
-          id: app.id,
-          name: app.name,
-          imageUrl: app.imageUrl,
-        };
-      });
+      const formattedApps = apps
+        .map((app) => {
+          return {
+            id: app.id,
+            name: app.name,
+            city: app.city,
+            imageUrl: app.imageUrl,
+          };
+        })
+        .slice(0, 30);
 
       res.status(200).json({ data: formattedApps });
     } catch (error) {
