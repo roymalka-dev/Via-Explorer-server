@@ -3,10 +3,6 @@ import { googleServices } from "../../services/api.services/google.services";
 import dotenv from "dotenv";
 import { AppType } from "../../types/app.types";
 import moment from "moment";
-import {
-  setIntervalAsync,
-  clearIntervalAsync,
-} from "set-interval-async/dynamic";
 
 dotenv.config();
 const GOOGLE_API_PSO_SPREADSHEET_ID = process.env.GOOGLE_API_PSO_SPREADSHEET_ID;
@@ -37,19 +33,21 @@ export const apiFunctions = {
       throw error;
     }
   },
+
   updateAllAppsFromStore: async () => {
     const allApps = await appService.getAllApps();
     let currentIndex = 0;
     const batchSize = 100;
     const interval = 15 * 60 * 1000; // 15 minutes in milliseconds
 
-    const intervalId = setIntervalAsync(async () => {
+    const intervalId = setInterval(async () => {
       const appsToUpdate = allApps.slice(
         currentIndex,
         currentIndex + batchSize
       );
       if (appsToUpdate.length === 0) {
-        await clearIntervalAsync(intervalId);
+        clearInterval(intervalId);
+        console.log("All apps have been updated.");
         return;
       }
 

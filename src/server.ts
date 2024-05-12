@@ -26,6 +26,6 @@ server.get("/", (req, res) => {
 setConfigurations().then(() => {
   server.listen(port, hostname, () => {
     console.log(`Server is running on  ${hostname}:${port}`);
-    //startScheduler();
+    startScheduler();
   });
 });
