@@ -1,13 +1,5 @@
 import { validateRequest } from "../../middleware/validator";
-import {
-  editUserDetailsController,
-  getAllUsersController,
-  getUserDetailsController,
-  getUserFavoritesController,
-  getUserRecentlyViewedController,
-  getUserRequestsController,
-  toggleUserFavoriteController,
-} from "../../controllers/user.controllers";
+import { userControllers } from "../../controllers/user.controllers";
 import { EndpointType } from "../../types/routes.types";
 import { appValidationParamsSchema } from "../../validations/app.validations";
 /**
@@ -30,7 +22,7 @@ export const userEndpoints: EndpointType[] = [
     name: "get user details",
     method: "get",
     path: "/get-user-details",
-    controller: getUserDetailsController,
+    controller: userControllers.getUserDetailsController,
     middleware: [],
     authority: "USER",
   },
@@ -48,7 +40,7 @@ export const userEndpoints: EndpointType[] = [
     name: "edit user details",
     method: "put",
     path: "/edit-user",
-    controller: editUserDetailsController,
+    controller: userControllers.editUserDetailsController,
     middleware: [],
     authority: "ADMIN",
   },
@@ -68,7 +60,7 @@ export const userEndpoints: EndpointType[] = [
     name: "get all users",
     method: "get",
     path: "/get-all-users",
-    controller: getAllUsersController,
+    controller: userControllers.getAllUsersController,
     middleware: [],
     authority: "ADMIN",
   },
@@ -87,7 +79,7 @@ export const userEndpoints: EndpointType[] = [
     name: "get user favorites",
     method: "get",
     path: "/get-user-favorites",
-    controller: getUserFavoritesController,
+    controller: userControllers.getUserFavoritesController,
     middleware: [],
     authority: "USER",
   },
@@ -109,7 +101,7 @@ export const userEndpoints: EndpointType[] = [
     name: "toggle user favorites",
     method: "post",
     path: "/toggle-user-favorite/:id",
-    controller: toggleUserFavoriteController,
+    controller: userControllers.toggleUserFavoriteController,
     middleware: [validateRequest(appValidationParamsSchema, "params")],
     authority: "USER",
   },
@@ -127,7 +119,7 @@ export const userEndpoints: EndpointType[] = [
     name: "get user recently viewed",
     method: "get",
     path: "/get-user-recently-viewed",
-    controller: getUserRecentlyViewedController,
+    controller: userControllers.getUserRecentlyViewedController,
     middleware: [],
     authority: "USER",
   },
@@ -145,7 +137,7 @@ export const userEndpoints: EndpointType[] = [
     name: "get user requests",
     method: "get",
     path: "/get-user-requests",
-    controller: getUserRequestsController,
+    controller: userControllers.getUserRequestsController,
     middleware: [],
     authority: "USER",
   },

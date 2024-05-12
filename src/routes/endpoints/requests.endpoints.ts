@@ -1,13 +1,6 @@
 import { validateRequest } from "../../middleware/validator";
-import {
-  createNewAppRequestController,
-  deleteRequestByIdController,
-  getAllRequestsController,
-  getRequestByIdController,
-  getS3PresignedUrlController,
-  removeS3ObjectController,
-  updateRequestStatusByIdController,
-} from "../../controllers/requests.controllers";
+
+import { requestsControllers } from "../../controllers/requests.controllers";
 import { EndpointType } from "../../types/routes.types";
 import {
   appRequestValidationBodySchema,
@@ -40,7 +33,7 @@ export const requestsEndpoints: EndpointType[] = [
     name: "get s3 presigned url",
     method: "post",
     path: "/get-s3-presigned-url",
-    controller: getS3PresignedUrlController,
+    controller: requestsControllers.getS3PresignedUrlController,
     middleware: [
       validateRequest(getS3PresignedUrlValidationBodySchema, "body"),
     ],
@@ -62,7 +55,7 @@ export const requestsEndpoints: EndpointType[] = [
     name: "remove s3 object",
     method: "delete",
     path: "/remove-s3-object/:bucketName/:fileName",
-    controller: removeS3ObjectController,
+    controller: requestsControllers.removeS3ObjectController,
     middleware: [
       validateRequest(deleteS3ObjectalidationParamsSchema, "params"),
     ],
@@ -85,7 +78,7 @@ export const requestsEndpoints: EndpointType[] = [
     name: "create new app request",
     method: "post",
     path: "/create-new-app-request",
-    controller: createNewAppRequestController,
+    controller: requestsControllers.createNewAppRequestController,
     middleware: [validateRequest(appRequestValidationBodySchema, "body")],
     authority: "USER",
   },
@@ -102,7 +95,7 @@ export const requestsEndpoints: EndpointType[] = [
     name: "get all requests",
     method: "get",
     path: "/get-all-requests",
-    controller: getAllRequestsController,
+    controller: requestsControllers.getAllRequestsController,
     middleware: [],
     authority: "ADMIN",
   },
@@ -120,7 +113,7 @@ export const requestsEndpoints: EndpointType[] = [
     name: "get request by id ",
     method: "get",
     path: "/get-request-by-id/:id",
-    controller: getRequestByIdController,
+    controller: requestsControllers.getRequestByIdController,
     middleware: [],
     authority: "ADMIN",
   },
@@ -136,7 +129,7 @@ export const requestsEndpoints: EndpointType[] = [
     name: "update request status ",
     method: "put",
     path: "/update-request-status",
-    controller: updateRequestStatusByIdController,
+    controller: requestsControllers.updateRequestStatusByIdController,
     middleware: [],
     authority: "ADMIN",
   },
@@ -154,7 +147,7 @@ export const requestsEndpoints: EndpointType[] = [
     name: "delete request",
     method: "delete",
     path: "/delete-request/:id",
-    controller: deleteRequestByIdController,
+    controller: requestsControllers.deleteRequestByIdController,
     middleware: [],
     authority: "ADMIN",
   },

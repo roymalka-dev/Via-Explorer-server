@@ -1,7 +1,4 @@
-import {
-  editConfigurationValueController,
-  getAllConfigurations,
-} from "../../controllers/configurations.controllers";
+import { configurationControllers } from "../../controllers/configurations.controllers";
 import { EndpointType } from "../../types/routes.types";
 /**
  * Endpoints related to configuration settings within the application.
@@ -20,7 +17,7 @@ export const configurationsEndpoints: EndpointType[] = [
     name: "get all configurations",
     method: "get",
     path: "/get-all-configurations",
-    controller: getAllConfigurations,
+    controller: configurationControllers.getAllConfigurations,
     middleware: [],
     authority: "ADMIN",
   },
@@ -36,7 +33,7 @@ export const configurationsEndpoints: EndpointType[] = [
     name: "edit configuration value",
     method: "put",
     path: "/edit-configuration",
-    controller: editConfigurationValueController,
+    controller: configurationControllers.editConfigurationValueController,
     middleware: [],
     authority: "ADMIN",
   },
