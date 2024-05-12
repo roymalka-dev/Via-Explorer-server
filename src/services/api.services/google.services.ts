@@ -3,7 +3,7 @@ import { google, sheets_v4 } from "googleapis";
 import dotenv from "dotenv";
 dotenv.config();
 
-const privateKey = process.env.GOOGLE_API_PRIVATE_KEY.replace(/\\n/g, "\n");
+const privateKey = process.env.GOOGLE_API_PRIVATE_KEY?.replace(/\\n/g, "\n");
 
 const GOOGLE_API_KEY_JSON = {
   type: "service_account",
