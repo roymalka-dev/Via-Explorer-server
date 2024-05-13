@@ -127,6 +127,7 @@ export const userControllers = {
         return {
           id: app.id,
           name: app.name,
+          city: app.city,
           imageUrl: app.imageUrl,
         };
       });
@@ -218,6 +219,7 @@ export const userControllers = {
         return {
           id: app.id,
           name: app.name,
+          city: app.city,
           imageUrl: app.imageUrl,
         };
       });
