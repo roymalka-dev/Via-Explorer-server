@@ -5,6 +5,7 @@ import { requestsEndpoints } from "./endpoints/requests.endpoints";
 import { userEndpoints } from "./endpoints/user.endpoints";
 import { RouteType } from "../types/routes.types";
 import { redisGetRequestCache } from "../middleware/redis";
+import { siteEndpoints } from "./endpoints/site.endpoints";
 
 export const routes: RouteType[] = [
   /**
@@ -51,5 +52,12 @@ export const routes: RouteType[] = [
     path: "/configurations",
     endpoints: configurationsEndpoints,
     middleware: [authenticator, redisGetRequestCache],
+  },
+
+  {
+    name: "site",
+    path: "/site",
+    endpoints: siteEndpoints,
+    middleware: [authenticator],
   },
 ];

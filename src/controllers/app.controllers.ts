@@ -1,5 +1,4 @@
 import { AppType } from "../types/app.types";
-import { RequestHandler } from "express";
 import { appService } from "../services/db.services/app.db.services";
 import moment from "moment";
 import { userService } from "../services/db.services/users.db.services";
