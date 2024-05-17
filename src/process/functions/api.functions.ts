@@ -40,15 +40,16 @@ export const apiFunctions = {
     const batchSize = 100;
     const interval = 15 * 60 * 1000; // 15 minutes in milliseconds
 
-    const intervalId = setInterval(async () => {
+    // Function to process each batch
+    const processBatch = async () => {
       const appsToUpdate = allApps.slice(
         currentIndex,
         currentIndex + batchSize
       );
+
       if (appsToUpdate.length === 0) {
-        clearInterval(intervalId);
         console.log("All apps have been updated.");
-        return;
+        return; // Stop further execution
       }
 
       for (const app of appsToUpdate) {
@@ -69,7 +70,10 @@ export const apiFunctions = {
             app.iosVersion = appStoreData.version;
             app.iosRelease = appStoreData.releaseDate;
             app.iosScreenshots = appStoreData.screenshotUrls;
+            app.iosCurrentVersionReleaseDate =
+              appStoreData.currentVersionReleaseDate;
             app.languages = appStoreData.languageCodesISO2A;
+            //app.iosAppId = appStoreData.trackId;
           }
 
           if (playStoreData) {
@@ -78,15 +82,22 @@ export const apiFunctions = {
             app.androidVersion = playStoreData.version;
             app.lastStoreUpdate = moment.now();
             app.androidScreenshots = playStoreData.screenshots;
+            app.androidCurrentVersionReleaseDate = new Date(
+              playStoreData.updated
+            ).toString();
+            //app.androidAppId = playStoreData.appId;
           }
 
-          await appService.addNewApp(app); // update app in database
+          await appService.addNewApp(app); // Update app in database
         } catch (error) {
           console.error("Error updating app:", app.name, error);
         }
       }
 
       currentIndex += batchSize;
-    }, interval);
+      setTimeout(processBatch, interval); // Schedule the next batch
+    };
+
+    processBatch();
   },
 };

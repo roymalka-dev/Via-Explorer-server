@@ -7,6 +7,8 @@ export type AppType = {
   id: string;
   name: string;
   queryName?: string;
+  iosAppId?: string;
+  androidAppId?: string;
   env: string;
   tenant: string;
   city: string;
@@ -18,12 +20,14 @@ export type AppType = {
   iosFolder?: string;
   iosBuilds?: appBuildVersionType[];
   iosScreenshots?: string[];
+  iosCurrentVersionReleaseDate?: string;
   androidVersion?: string;
   androidRelease?: string;
   androidFolder?: string;
   androidLink?: string;
   androidBuilds?: appBuildVersionType[];
   androidScreenshots?: string[];
+  androidCurrentVersionReleaseDate?: string;
   languages?: string[];
   colorSpecs?: string;
   figmaAppName?: string;

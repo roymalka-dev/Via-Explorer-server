@@ -156,13 +156,11 @@ export const appService = {
    */
   searchAppInStore: async (
     store: "appstore" | "playstore",
-    appName: string
+    appId: string
   ): Promise<any> => {
     try {
-      const encodedAppName = encodeURIComponent(appName);
-
       if (store === "appstore") {
-        const url = `https://itunes.apple.com/search?term=${encodedAppName}&entity=software&sellerName=Via+Transportation`;
+        const url = `https://itunes.apple.com/lookup?id=${appId}`;
         const response = await axios.get(url);
         const app = response.data.results[0];
         return app;
@@ -170,19 +168,8 @@ export const appService = {
         const gplay = await import("google-play-scraper").then(
           (module: any) => module.default || module
         );
-        const searchResults = await gplay.search({
-          term: appName,
-          num: 1,
-        });
 
-        if (searchResults.length > 0) {
-          const appId = searchResults[0].appId;
-
-          const appDetails = await gplay.app({ appId: appId });
-
-          return appDetails;
-        }
-        return null;
+        return await gplay.app({ appId: appId });
       }
     } catch (error) {
       console.error("Error fetching app data:", error);

@@ -4,6 +4,7 @@ import moment from "moment";
 import { userService } from "../services/db.services/users.db.services";
 import { getConfigValue } from "../utils/configurations.utils";
 import { Request, Response } from "express";
+import { apiFunctions } from "../process/functions/api.functions";
 
 export const appControllers = {
   /**
@@ -52,11 +53,11 @@ export const appControllers = {
       ) {
         const appStoreData = await appService.searchAppInStore(
           "appstore",
-          item.name
+          item.iosAppId
         );
         const playSotreData = await appService.searchAppInStore(
           "playstore",
-          item.name
+          item.androidAppId
         );
 
         if (appStoreData) {
@@ -426,6 +427,21 @@ export const appControllers = {
       res
         .status(500)
         .json({ message: "Failed to update apps due to an internal error." });
+    }
+  },
+  updateAppsFromStores: async (req: Request, res: Response) => {
+    try {
+      await apiFunctions
+        .updateAllAppsFromStore()
+        .then(() => {
+          res.status(200).json({ message: "all apps updated successfully" });
+        })
+        .catch((error) => {
+          throw error;
+        });
+    } catch (error) {
+      console.error("Error updating app IDs:", error);
+      res.status(500).json({ message: "Internal server error", error });
     }
   },
 };

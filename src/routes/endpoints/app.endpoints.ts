@@ -146,4 +146,12 @@ export const appEndpoints: EndpointType[] = [
     middleware: [],
     authority: "ADMIN",
   },
+  {
+    name: "update apps from stores",
+    method: "post",
+    path: "/update-apps-from-stores",
+    controller: appControllers.updateAppsFromStores,
+    middleware: [],
+    authority: "ADMIN",
+  },
 ];
