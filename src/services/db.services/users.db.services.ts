@@ -1,8 +1,10 @@
 import {
   GetItemCommand,
+  GetItemCommandInput,
   PutItemCommand,
   ScanCommand,
   UpdateItemCommand,
+  UpdateItemCommandInput,
 } from "@aws-sdk/client-dynamodb";
 import { dynamoDB } from "../../db/db";
 import { marshall, unmarshall } from "@aws-sdk/util-dynamodb";
@@ -311,28 +313,39 @@ export const userService = {
    */
   async updateUserRecentlyViewed(email: string, appId: string) {
     const NUMBER_OF_USER_RECENTLY_VIEWED_APPS = Number(
-      getConfigValue("NUMBER_OF_USER_RECENTLY_VIEWED_APPS", 10)
+      getConfigValue("NUMBER_OF_USER_RECENTLY_VIEWED_APPS", 12)
     );
 
+    if (!appId || !email) {
+      return;
+    }
+
     try {
-      const getParams = {
+      // Prepare to fetch the current list of recently viewed apps
+      const getParams: GetItemCommandInput = {
         TableName: "users",
         Key: { email: { S: email } },
         ProjectionExpression: "recentlyViewed",
       };
+
       const getCommand = new GetItemCommand(getParams);
       const getResponse = await dynamoDB.send(getCommand);
+
+      // Initialize current list from DynamoDB response or default to an empty array
       let currentList = getResponse.Item?.recentlyViewed?.SS || [];
 
-      currentList = currentList.filter((app) => app !== appId);
+      // Remove the current appId if it's already in the list to avoid duplicates
+      currentList = currentList.filter(
+        (existingAppId) => existingAppId !== appId
+      );
+      // Add the new appId to the front of the list
+      currentList.unshift(appId);
 
-      currentList.push(appId);
+      // Ensure the list does not exceed the maximum number of allowed entries
+      currentList = currentList.slice(0, NUMBER_OF_USER_RECENTLY_VIEWED_APPS);
 
-      while (currentList.length > NUMBER_OF_USER_RECENTLY_VIEWED_APPS) {
-        currentList.shift();
-      }
-
-      const updateParams = {
+      // Prepare to update the list back into DynamoDB
+      const updateParams: UpdateItemCommandInput = {
         TableName: "users",
         Key: { email: { S: email } },
         UpdateExpression: "SET recentlyViewed = :rv",
@@ -340,10 +353,19 @@ export const userService = {
           ":rv": { SS: currentList },
         },
       };
+
       const updateCommand = new UpdateItemCommand(updateParams);
       await dynamoDB.send(updateCommand);
     } catch (error) {
-      throw new Error("An error occurred while updating user recently viewed.");
+      // Enhanced error handling
+      console.error(
+        "Failed to update user recently viewed apps for:",
+        email,
+        error
+      );
+      throw new Error(
+        `An error occurred while updating user recently viewed apps for email: ${email}. ${error}`
+      );
     }
   },
 

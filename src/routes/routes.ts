@@ -17,7 +17,7 @@ export const routes: RouteType[] = [
     name: "app",
     path: "/app",
     endpoints: appEndpoints,
-    middleware: [redisGetRequestCache],
+    middleware: [authenticator, redisGetRequestCache],
   },
 
   /**
