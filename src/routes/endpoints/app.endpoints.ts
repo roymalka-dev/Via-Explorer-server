@@ -154,4 +154,12 @@ export const appEndpoints: EndpointType[] = [
     middleware: [],
     authority: "ADMIN",
   },
+  {
+    name: "update psm pso",
+    method: "post",
+    path: "/update-psm-pso",
+    controller: appControllers.updatePsmPso,
+    middleware: [],
+    authority: "ADMIN",
+  },
 ];

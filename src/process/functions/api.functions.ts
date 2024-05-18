@@ -10,6 +10,7 @@ const GOOGLE_API_PSO_SHEET_NAME = process.env.GOOGLE_API_PSO_SHEET_NAME;
 
 export const apiFunctions = {
   updatePSOGoogleSheet: async () => {
+    const allApps = await appService.getAllApps();
     try {
       const data = await googleServices.getGoogleSpreadSheetData(
         GOOGLE_API_PSO_SPREADSHEET_ID,
@@ -23,10 +24,18 @@ export const apiFunctions = {
           (row) =>
             ({
               id: row[0],
-              pso: row[1] || "",
-              psm: row[7] || "",
+              pso: row[1] || "n/a",
+              psm: row[7] || "n/a",
             } as AppType)
         );
+
+      //remove all apps in formatteddata which thier ids not exist in all apps
+      for (let i = 0; i < formattedData.length; i++) {
+        if (!allApps.find((app) => app.id === formattedData[i].id)) {
+          formattedData.splice(i, 1);
+          i--;
+        }
+      }
 
       await appService.updateMultipleApps(formattedData);
     } catch (error) {

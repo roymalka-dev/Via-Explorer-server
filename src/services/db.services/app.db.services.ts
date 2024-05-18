@@ -245,7 +245,7 @@ export const appService = {
 
   updateMultipleApps: async (apps: AppType[]): Promise<void> => {
     try {
-      const delayIncrement = 900000 / 100; // 15 minutes divided by 100
+      const delayIncrement = (1000 * 60 * 60) / 50; // 15 minutes divided by 50
       let delay = 0;
 
       const updatePromises = apps.map(async (app) => {

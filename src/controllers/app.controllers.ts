@@ -478,4 +478,19 @@ export const appControllers = {
       res.status(500).json({ message: "Internal server error", error });
     }
   },
+  updatePsmPso: async (req: Request, res: Response) => {
+    try {
+      await apiFunctions
+        .updatePSOGoogleSheet()
+        .then(() => {
+          res.status(200).json({ message: "all apps updated successfully" });
+        })
+        .catch((error) => {
+          throw error;
+        });
+    } catch (error) {
+      console.error("Error updating app IDs:", error);
+      res.status(500).json({ message: "Internal server error", error });
+    }
+  },
 };
