@@ -68,6 +68,8 @@ export const appControllers = {
           item.iosRelease = appStoreData.releaseDate;
           item.iosScreenshots = appStoreData.screenshotUrls;
           item.languages = appStoreData.languageCodesISO2A;
+          item.iosCurrentVersionReleaseDate =
+            appStoreData.currentVersionReleaseDate;
         }
 
         if (playSotreData) {
@@ -76,6 +78,9 @@ export const appControllers = {
           item.androidVersion = playSotreData.version;
           item.lastStoreUpdate = moment.now();
           item.androidScreenshots = playSotreData.screenshots;
+          item.androidCurrentVersionReleaseDate = new Date(
+            playSotreData.updated
+          ).toISOString();
         }
 
         await appService.addNewApp(item); //update
@@ -232,21 +237,50 @@ export const appControllers = {
    */
   addNewAppController: async (req: Request, res: Response) => {
     try {
-      let appData: AppType = req.body;
+      let app: AppType = req.body;
+
+      //check if id available
+      const existingApp = await appService.getAppById(String(app.id));
+      if (existingApp) {
+        return res.status(400).json({ message: "App already exists" });
+      }
 
       const appStoreData = await appService.searchAppInStore(
         "appstore",
-        appData.name
+        app.name
+      );
+      const playStoreData = await appService.searchAppInStore(
+        "playstore",
+        app.name
       );
 
       if (appStoreData) {
-        appData.imageUrl = appStoreData.artworkUrl512;
-        appData.iosLink = appStoreData.trackViewUrl;
-        appData.lastStoreUpdate = moment.now();
-        appData.iosVersion = appStoreData.version;
+        app.imageUrl = appStoreData.artworkUrl512;
+        app.iosLink = appStoreData.trackViewUrl;
+        app.lastStoreUpdate = moment.now();
+        app.iosVersion = appStoreData.version;
+        app.iosRelease = appStoreData.releaseDate;
+        app.iosScreenshots = appStoreData.screenshotUrls;
+        app.iosCurrentVersionReleaseDate =
+          appStoreData.currentVersionReleaseDate;
+        app.languages = appStoreData.languageCodesISO2A;
       }
 
-      const success = await appService.addNewApp(appData);
+      if (playStoreData) {
+        if (!app.imageUrl) app.imageUrl = playStoreData.icon;
+        app.androidLink = playStoreData.url;
+        app.androidVersion = playStoreData.version;
+        app.lastStoreUpdate = moment.now();
+        app.androidScreenshots = playStoreData.screenshots;
+        app.androidCurrentVersionReleaseDate = new Date(
+          playStoreData.updated
+        ).toString();
+      }
+
+      app.queryName = app.name.toLowerCase();
+      app.id = String(app.id);
+
+      const success = await appService.addNewApp(app);
 
       if (success) {
         res.status(200).json({ message: "App added successfully" });
