@@ -45,6 +45,7 @@ export const apiFunctions = {
 
   updateAllAppsFromStore: async () => {
     const allApps = await appService.getAllApps();
+    console.log("Updating all apps from store...", allApps.length);
     let currentIndex = 0;
     const batchSize = 100;
     const interval = 15 * 60 * 1000; // 15 minutes in milliseconds
@@ -65,22 +66,23 @@ export const apiFunctions = {
         try {
           const appStoreData = await appService.searchAppInStore(
             "appstore",
-            app.name
+            app.iosAppId
           );
           const playStoreData = await appService.searchAppInStore(
             "playstore",
-            app.name
+            app.androidAppId
           );
 
           if (appStoreData) {
             app.imageUrl = appStoreData.artworkUrl512;
+            app.iosBundleId = appStoreData.bundleId;
             app.iosLink = appStoreData.trackViewUrl;
             app.lastStoreUpdate = moment.now();
             app.iosVersion = appStoreData.version;
-            app.iosRelease = appStoreData.releaseDate;
+            app.iosRelease = appStoreData.releaseDate.split("T")[0];
             app.iosScreenshots = appStoreData.screenshotUrls;
             app.iosCurrentVersionReleaseDate =
-              appStoreData.currentVersionReleaseDate;
+              appStoreData.currentVersionReleaseDate.split("T")[0];
             app.languages = appStoreData.languageCodesISO2A;
             //app.iosAppId = appStoreData.trackId;
           }
@@ -93,11 +95,13 @@ export const apiFunctions = {
             app.androidScreenshots = playStoreData.screenshots;
             app.androidCurrentVersionReleaseDate = new Date(
               playStoreData.updated
-            ).toString();
+            )
+              .toISOString()
+              .split("T")[0];
             //app.androidAppId = playStoreData.appId;
           }
 
-          await appService.addNewApp(app); // Update app in database
+          await appService.updateMultipleApps([app]); // Update app in database
         } catch (error) {
           console.error("Error updating app:", app.name, error);
         }

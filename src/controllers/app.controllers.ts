@@ -63,13 +63,14 @@ export const appControllers = {
         if (appStoreData) {
           item.imageUrl = appStoreData.artworkUrl512;
           item.iosLink = appStoreData.trackViewUrl;
+          item.iosBundleId = appStoreData.bundleId;
           item.lastStoreUpdate = moment.now();
           item.iosVersion = appStoreData.version;
-          item.iosRelease = appStoreData.releaseDate;
+          item.iosRelease = appStoreData.releaseDate.split("T")[0];
           item.iosScreenshots = appStoreData.screenshotUrls;
           item.languages = appStoreData.languageCodesISO2A;
           item.iosCurrentVersionReleaseDate =
-            appStoreData.currentVersionReleaseDate;
+            appStoreData.currentVersionReleaseDate.split("T")[0];
         }
 
         if (playSotreData) {
@@ -80,7 +81,9 @@ export const appControllers = {
           item.androidScreenshots = playSotreData.screenshots;
           item.androidCurrentVersionReleaseDate = new Date(
             playSotreData.updated
-          ).toISOString();
+          )
+            .toISOString()
+            .split("T")[0];
         }
 
         await appService.addNewApp(item); //update

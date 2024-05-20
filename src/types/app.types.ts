@@ -18,6 +18,7 @@ export type AppType = {
   iosLink?: string;
   iosRelease?: string;
   iosFolder?: string;
+  iosBundleId?: string;
   iosBuilds?: appBuildVersionType[];
   iosScreenshots?: string[];
   iosCurrentVersionReleaseDate?: string;
