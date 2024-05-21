@@ -418,6 +418,7 @@ export const appControllers = {
             name: app.name,
             city: app.city,
             imageUrl: app.imageUrl,
+            region: app.region,
           };
         })
         .slice(0, 30);
