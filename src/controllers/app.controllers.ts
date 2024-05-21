@@ -403,7 +403,26 @@ export const appControllers = {
       if (query) {
         apps = await appService.searchAppsInDb(query);
       } else {
-        const appsIds = await userService.getRecentlyViewed(req.session.user);
+        let appsIds = await userService.getRecentlyViewed(req.session.user);
+
+        if (appsIds.length < 2) {
+          //set default apps ids for new users
+          appsIds = [
+            "1",
+            "454",
+            "505",
+            "475",
+            "99",
+            "141",
+            "207",
+            "608",
+            "597",
+            "195",
+            "298",
+            "280",
+          ];
+        }
+
         apps = await appService.getAppsByIds(appsIds);
 
         if (apps.length === 0) {
