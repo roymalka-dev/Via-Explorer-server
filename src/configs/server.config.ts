@@ -64,5 +64,7 @@ export const serverConfig = (server: Application) => {
             ],
     })
   );
-  process.env.NODE_ENV === "DEV" && server.use(morgan("common"));
+  process.env.NODE_ENV === "DEV"
+    ? server.use(morgan("common"))
+    : server.use(morgan("tiny"));
 };
