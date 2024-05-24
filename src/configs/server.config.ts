@@ -56,7 +56,12 @@ export const serverConfig = (server: Application) => {
       origin:
         process.env.NODE_ENV === "DEV"
           ? [process.env.LOCAL_HOST_URL_CORS, process.env.APPLE_API_URL]
-          : [process.env.PRODUCTION_CORS_URL, process.env.APPLE_API_URL],
+          : [
+              process.env.PRODUCTION_CORS_URL1,
+              process.env.PRODUCTION_CORS_URL2,
+              process.env.PRODUCTION_CORS_URL3,
+              process.env.APPLE_API_URL,
+            ],
     })
   );
   process.env.NODE_ENV === "DEV" && server.use(morgan("common"));
