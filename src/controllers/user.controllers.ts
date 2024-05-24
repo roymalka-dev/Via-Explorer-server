@@ -56,7 +56,13 @@ export const userControllers = {
   getAllUsersController: async (req: Request, res: Response) => {
     try {
       const users = await userService.getAllUsers();
-      res.status(200).json({ data: users });
+      const formattedUsers = users.map((user) => {
+        return {
+          email: user.email,
+          authorization: user.authorization,
+        };
+      });
+      res.status(200).json({ data: formattedUsers });
     } catch (error) {
       res
         .status(500)
