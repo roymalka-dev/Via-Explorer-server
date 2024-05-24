@@ -3,7 +3,7 @@ import cron from "node-cron";
 import { apiFunctions } from "./functions/api.functions";
 
 const scheduler = cron.schedule("0 0 * * *", () => {
-  /*
+  
   apiFunctions
     .updatePSOGoogleSheet()
     .then(() => {
@@ -12,7 +12,7 @@ const scheduler = cron.schedule("0 0 * * *", () => {
     .catch((error) => {
       console.error(error);
     });
-  */
+  
 
   apiFunctions
     .updateAllAppsFromStore()

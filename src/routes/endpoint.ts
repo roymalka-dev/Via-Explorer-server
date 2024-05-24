@@ -1,6 +1,6 @@
 import express, { RequestHandler } from "express";
 import { EndpointType } from "types/routes.types";
-
+import { authorityValidator } from "../middleware/authorityValidator";
 /**
  * Dynamically creates and configures endpoints for an Express router based on the provided configurations.
  *
@@ -14,10 +14,15 @@ export const createEndpoints = (
 ): express.Router => {
   const router = express.Router();
 
-  endpoints.forEach(({ path, method, controller, middleware }) => {
+  endpoints.forEach(({ path, method, controller, middleware, authority }) => {
     const middlewares: RequestHandler[] = Array.isArray(middleware)
       ? middleware
       : [];
+
+    if (authority) {
+      middlewares.unshift(authorityValidator(authority));
+    }
+
     if (typeof router[method] === "function") {
       router[method](path, ...middlewares, controller);
     } else {

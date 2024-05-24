@@ -6,6 +6,7 @@ import { userEndpoints } from "./endpoints/user.endpoints";
 import { RouteType } from "../types/routes.types";
 import { redisGetRequestCache } from "../middleware/redis";
 import { siteEndpoints } from "./endpoints/site.endpoints";
+import { authEndpoints } from "./endpoints/auth.endpoints";
 
 export const routes: RouteType[] = [
   /**
@@ -54,10 +55,27 @@ export const routes: RouteType[] = [
     middleware: [authenticator, redisGetRequestCache],
   },
 
+  /**
+   * Route configuration for the 'site' section of the API.
+   * This group, accessible via '/site', contains endpoints for managing site settings.
+   * All endpoints in this group are protected by the 'authenticator' middleware, typically requiring administrative access.
+   * The 'redisGetRequestCache' middleware is also applied to cache requests.
+   */
   {
     name: "site",
     path: "/site",
     endpoints: siteEndpoints,
+    middleware: [authenticator],
+  },
+  /**
+   * Route configuration for the 'auth' section of the API.
+   * This group, accessible via '/auth', contains endpoints for user authentication and authorization.
+   * All endpoints in this group are protected by the 'authenticator' middleware, ensuring proper authentication.
+   */
+  {
+    name: "auth",
+    path: "/auth",
+    endpoints: authEndpoints,
     middleware: [authenticator],
   },
 ];

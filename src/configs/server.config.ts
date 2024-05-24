@@ -6,64 +6,58 @@ import session from "express-session";
 import helmet from "helmet";
 import { getConfigValue } from "../utils/configurations.utils";
 import dotenv from "dotenv";
-import { startRedisClient } from "../db/redis";
+import { redis, startRedisClient } from "../db/redis";
+import RedisStore from "connect-redis";
 dotenv.config();
 
+declare module "express-session" {
+  interface SessionData {
+    user: string;
+    authorization: string;
+  }
+}
 export const serverConfig = (server: Application) => {
   const TIME_TO_END_SERVER_USER_SESSION_IN_HR = Number(
     getConfigValue("TIME_TO_END_SERVER_USER_SESSION_IN_HR", 12)
   );
 
+  startRedisClient();
+
   server.use(express.json());
   server.use(bodyParser.json({ limit: "30mb" }));
   server.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
   server.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
+
   server.use(
     session({
+      store: new RedisStore({ client: redis }),
       secret: process.env.SESSION_SECRET,
       resave: false,
-      saveUninitialized: true,
+      saveUninitialized: false,
       cookie: {
-        secure: true,
+        secure: process.env.NODE_ENV === "DEV" ? false : true,
+        httpOnly: true,
         maxAge: TIME_TO_END_SERVER_USER_SESSION_IN_HR * 60 * 60 * 1000,
       },
     })
   );
+  /*
 
   server.use(
     cors({
       credentials: true,
       origin: "*",
     })
-  );
+  );*/
 
-  startRedisClient();
-
-  /*
   server.use(
     cors({
       credentials: true,
-      allowedHeaders: [
-        "X-CSRF-Token",
-        "X-Requested-With",
-        "Accept",
-        "Accept-Version",
-        "Content-Length",
-        "Content-MD5",
-        "Content-Type",
-        "Date",
-        "X-Api-Version",
-        "Authorization",
-      ],
-
-      methods: "GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS",
       origin:
         process.env.NODE_ENV === "DEV"
           ? [process.env.LOCAL_HOST_URL_CORS, process.env.APPLE_API_URL]
           : [process.env.PRODUCTION_CORS_URL, process.env.APPLE_API_URL],
     })
   );
-  */
-
   process.env.NODE_ENV === "DEV" && server.use(morgan("common"));
 };

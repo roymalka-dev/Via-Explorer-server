@@ -1,10 +1,11 @@
-import { NextFunction, RequestHandler } from "express";
+import { RequestHandler } from "express";
 import { OAuth2Client } from "google-auth-library";
 import { userService } from "../services/db.services/users.db.services"; // Import userService
 
 declare module "express-session" {
   interface SessionData {
-    user: any;
+    user: string;
+    authorization: string;
   }
 }
 
@@ -41,6 +42,10 @@ export const authenticator: RequestHandler = async (req, res, next) => {
     if (bearer !== "Bearer" || !token)
       throw new Error("Invalid authorization header format");
 
+    if (req.session.user && req.session.authorization) {
+      return next();
+    }
+
     const ticket = await client.verifyIdToken({
       idToken: token,
       audience: process.env.GOOGLE_CLIENT_ID,
@@ -71,6 +76,14 @@ export const authenticator: RequestHandler = async (req, res, next) => {
       }
 
       req.session.user = payload.email;
+      req.session.authorization = user.authorization;
+
+      req.session.save((err) => {
+        if (err) {
+          throw new Error("Failed to save session");
+        } else {
+        }
+      });
     }
 
     next();
