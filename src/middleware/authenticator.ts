@@ -92,6 +92,10 @@ export const authenticator: RequestHandler = async (req, res, next) => {
       });
     }
 
+    logger.info(`User connected: ${payload.email}`, {
+      tag: "user-connected",
+      location: "authenticator.ts",
+    });
     next();
   } catch (error) {
     logger.error("Authentication error", {
