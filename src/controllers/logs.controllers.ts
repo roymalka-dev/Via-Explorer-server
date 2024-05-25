@@ -12,7 +12,7 @@ export const logsControllers = {
       logger.error(`Failed to retrieve logs for date ${date}`, {
         tag: "error",
         location: "logs.controllers.ts",
-        error: (error as Error).message,
+        error: JSON.stringify(error, Object.getOwnPropertyNames(error)),
       });
       res.status(500).send("Failed to retrieve logs");
     }
