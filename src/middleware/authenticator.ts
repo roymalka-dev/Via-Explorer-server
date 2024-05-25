@@ -44,11 +44,8 @@ export const authenticator: RequestHandler = async (req, res, next) => {
       throw new Error("Invalid authorization header format");
 
     if (req.session.user && req.session.authorization) {
-      console.log("User already authenticated");
       return next();
     }
-
-    console.log("Verifying token...");
 
     const ticket = await client.verifyIdToken({
       idToken: token,
