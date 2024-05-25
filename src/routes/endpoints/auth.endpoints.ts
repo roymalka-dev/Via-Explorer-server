@@ -43,4 +43,22 @@ export const authEndpoints: EndpointType[] = [
     middleware: [],
     authority: "ADMIN",
   },
+  /**
+   * Controller for logging out the user.
+   *
+   * This controller handles an HTTP GET request to log out the user.
+   * It sends a response with a 200 status code and a message indicating that the user has been logged out.
+   * the authenciaction is done by the authenticator middleware.
+   *
+   * @param {Request} req - The Express request object. This function does not use any request parameters.
+   * @param {Response} res - The Express response object used to send back a message indicating that the user has been logged out.
+   */
+  {
+    name: "logout",
+    method: "post",
+    path: "/logout",
+    controller: authControllers.logout,
+    middleware: [],
+    authority: "USER",
+  },
 ];
