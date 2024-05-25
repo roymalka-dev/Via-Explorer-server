@@ -103,7 +103,7 @@ export const apiFunctions = {
 
           await appService.updateMultipleApps([app]); // Update app in database
         } catch (error) {
-          console.error("Error updating app:", app.name, error);
+          throw error;
         }
       }
 

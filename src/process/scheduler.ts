@@ -1,18 +1,21 @@
 import cron from "node-cron";
 
 import { apiFunctions } from "./functions/api.functions";
+import logger from "../logger/logger";
 
 const scheduler = cron.schedule("0 0 * * *", () => {
-  
   apiFunctions
     .updatePSOGoogleSheet()
     .then(() => {
       console.log("Update PSO list successfully!");
     })
     .catch((error) => {
-      console.error(error);
+      logger.error("Error updating PSO list", {
+        tag: "error",
+        location: "scheduler.ts",
+        error: error.message,
+      });
     });
-  
 
   apiFunctions
     .updateAllAppsFromStore()
@@ -20,7 +23,11 @@ const scheduler = cron.schedule("0 0 * * *", () => {
       console.log("Updated all apps from store successfully!");
     })
     .catch((error) => {
-      console.error(error);
+      logger.error("Error updating all apps from store", {
+        tag: "error",
+        location: "scheduler.ts",
+        error: error.message,
+      });
     });
 });
 
