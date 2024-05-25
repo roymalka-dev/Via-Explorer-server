@@ -528,10 +528,6 @@ export const appControllers = {
       await apiFunctions
         .updateAllAppsFromStore()
         .then(() => {
-          logger.info("Updating all apss from store...", {
-            tag: "info",
-            location: "app.controllers.ts",
-          });
           res
             .status(200)
             .json({ message: "Started updating all apps from stores" });

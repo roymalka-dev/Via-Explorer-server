@@ -40,7 +40,7 @@ export const apiFunctions = {
 
       await appService.updateMultipleApps(formattedData);
       logger.info("PSO list updated successfully", {
-        tag: "info",
+        tag: "api",
         location: "api.functions.ts",
       });
     } catch (error) {
@@ -50,8 +50,8 @@ export const apiFunctions = {
 
   updateAllAppsFromStore: async () => {
     const allApps = await appService.getAllApps();
-    logger.info(`Updating all apps from store..., ${allApps.length}`, {
-      tag: "info",
+    logger.info(`Updating all apps from store... ${allApps.length}`, {
+      tag: "api",
       location: "api.functions.ts",
       count: allApps.length,
     });
@@ -68,7 +68,7 @@ export const apiFunctions = {
 
       if (appsToUpdate.length === 0) {
         logger.info("All apps updated successfully", {
-          tag: "info",
+          tag: "api",
           location: "api.functions.ts",
         });
         return;
@@ -115,6 +115,11 @@ export const apiFunctions = {
 
           await appService.updateMultipleApps([app]); // Update app in database
         } catch (error) {
+          logger.error(`Failed to update app ${app.id}`, {
+            tag: "error",
+            location: "api.functions.ts",
+            error: error.message,
+          });
           throw error;
         }
       }
