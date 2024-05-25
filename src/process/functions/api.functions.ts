@@ -3,6 +3,7 @@ import { googleServices } from "../../services/api.services/google.services";
 import dotenv from "dotenv";
 import { AppType } from "../../types/app.types";
 import moment from "moment";
+import logger from "../../logger/logger";
 
 dotenv.config();
 const GOOGLE_API_PSO_SPREADSHEET_ID = process.env.GOOGLE_API_PSO_SPREADSHEET_ID;
@@ -38,6 +39,10 @@ export const apiFunctions = {
       }
 
       await appService.updateMultipleApps(formattedData);
+      logger.info("PSO list updated successfully", {
+        tag: "info",
+        location: "api.functions.ts",
+      });
     } catch (error) {
       throw error;
     }
@@ -45,7 +50,11 @@ export const apiFunctions = {
 
   updateAllAppsFromStore: async () => {
     const allApps = await appService.getAllApps();
-    console.log("Updating all apps from store...", allApps.length);
+    logger.info(`Updating all apps from store..., ${allApps.length}`, {
+      tag: "info",
+      location: "api.functions.ts",
+      count: allApps.length,
+    });
     let currentIndex = 0;
     const batchSize = 100;
     const interval = 15 * 60 * 1000; // 15 minutes in milliseconds
@@ -58,8 +67,11 @@ export const apiFunctions = {
       );
 
       if (appsToUpdate.length === 0) {
-        console.log("All apps have been updated.");
-        return; // Stop further execution
+        logger.info("All apps updated successfully", {
+          tag: "info",
+          location: "api.functions.ts",
+        });
+        return;
       }
 
       for (const app of appsToUpdate) {
