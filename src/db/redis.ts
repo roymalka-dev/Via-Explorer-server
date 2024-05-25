@@ -1,4 +1,5 @@
 import Redis from "ioredis";
+import logger from "../logger/logger";
 
 export const redis = new Redis({
   port: 6379,
@@ -8,13 +9,20 @@ export const redis = new Redis({
 export const startRedisClient = () => {
   try {
     redis.on("connect", () => {
-      console.log("Connected to Redis");
+      logger.info("Redis client connected", {
+        tag: "redis",
+        location: "redis.ts",
+      });
     });
 
     redis.on("error", (err) => {
-      console.error("Redis Client Error", err);
+      throw err;
     });
   } catch (err) {
-    console.error("Error while connecting to Redis", err);
+    logger.error("Error starting Redis client", {
+      tag: "error",
+      location: "redis.ts",
+      error: err.message,
+    });
   }
 };

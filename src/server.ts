@@ -27,12 +27,11 @@ server.get("/", (req, res) => {
 setConfigurations()
   .then(() => {
     server.listen(port, hostname, () => {
-      /*
       logger.info(`Server started, running on ${hostname}:${port}`, {
         tag: "server",
         location: "server.ts",
       });
-       */
+
       startScheduler();
     });
   })
