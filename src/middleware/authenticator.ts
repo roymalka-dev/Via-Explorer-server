@@ -1,6 +1,7 @@
 import { RequestHandler } from "express";
 import { OAuth2Client } from "google-auth-library";
 import { userService } from "../services/db.services/users.db.services"; // Import userService
+import logger from "../logger/logger";
 
 declare module "express-session" {
   interface SessionData {
@@ -72,15 +73,20 @@ export const authenticator: RequestHandler = async (req, res, next) => {
         };
         await userService.addUser(newUserDetails);
 
+        logger.info(`New user Added: ${payload.email}`, {
+          tag: "new-user",
+          location: "authenticator.ts",
+        });
+
         user = await userService.getUserByEmail(payload.email);
       }
 
       req.session.user = payload.email;
       req.session.authorization = user.authorization;
 
-      req.session.save((err) => {
-        if (err) {
-          throw new Error("Failed to save session");
+      req.session.save((error) => {
+        if (error) {
+          throw error;
         } else {
         }
       });
@@ -88,6 +94,11 @@ export const authenticator: RequestHandler = async (req, res, next) => {
 
     next();
   } catch (error) {
+    logger.error("Authentication error", {
+      tag: "error",
+      location: "authenticator.ts",
+      error: error.message,
+    });
     res.status(403).send({ error: error.message });
   }
 };

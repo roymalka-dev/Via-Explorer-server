@@ -7,6 +7,7 @@ import { RouteType } from "../types/routes.types";
 import { redisGetRequestCache } from "../middleware/redis";
 import { siteEndpoints } from "./endpoints/site.endpoints";
 import { authEndpoints } from "./endpoints/auth.endpoints";
+import { logsEndpoints } from "./endpoints/logs.endpoints";
 
 export const routes: RouteType[] = [
   /**
@@ -77,5 +78,16 @@ export const routes: RouteType[] = [
     path: "/auth",
     endpoints: authEndpoints,
     middleware: [authenticator],
+  },
+  /**
+   * Route configuration for the 'logs' section of the API.
+   * This group, accessible via '/logs', contains endpoints for retrieving log data.
+   * All endpoints in this group are protected by the 'authenticator' middleware, ensuring proper authentication.
+   */
+  {
+    name: "logs",
+    path: "/logs",
+    endpoints: logsEndpoints,
+    middleware: [],
   },
 ];

@@ -268,7 +268,6 @@ export const requestsService = {
     try {
       await dynamoDB.send(new UpdateCommand(params));
     } catch (error) {
-      console.error("Error updating item:", error);
       throw error;
     }
   },
@@ -317,7 +316,6 @@ export const requestsService = {
       };
       await dynamoDB.send(new DeleteCommand(params));
     } catch (error) {
-      console.error("Error deleting item:", error);
       throw error;
     }
   },

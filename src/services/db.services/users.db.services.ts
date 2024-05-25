@@ -35,16 +35,20 @@ export const userService = {
    * @throws {Error} Throws an error if there's an issue during the database operation, such as connectivity problems or permission errors.
    */
   async getUserByEmail(email: string) {
-    const { Item } = await dynamoDB.send(
-      new GetItemCommand({
-        TableName,
-        Key: marshall({ email }), // Use marshall to simplify key construction
-      })
-    );
+    try {
+      const { Item } = await dynamoDB.send(
+        new GetItemCommand({
+          TableName,
+          Key: marshall({ email }), // Use marshall to simplify key construction
+        })
+      );
 
-    if (!Item) return null;
+      if (!Item) return null;
 
-    return unmarshall(Item);
+      return unmarshall(Item);
+    } catch (error) {
+      throw error;
+    }
   },
 
   /**
@@ -77,17 +81,21 @@ export const userService = {
     favorites?: string[];
     requests?: string[];
   }) {
-    const item = marshall({
-      ...userDetails,
-      favorites: userDetails.favorites || [],
-    });
+    try {
+      const item = marshall({
+        ...userDetails,
+        favorites: userDetails.favorites || [],
+      });
 
-    await dynamoDB.send(
-      new PutItemCommand({
-        TableName,
-        Item: item,
-      })
-    );
+      await dynamoDB.send(
+        new PutItemCommand({
+          TableName,
+          Item: item,
+        })
+      );
+    } catch (error) {
+      throw error;
+    }
   },
   /**
    * Retrieves all users from the database.
@@ -134,13 +142,17 @@ export const userService = {
    * @throws {Error} Throws an error if there's an issue during the database operation, such as connectivity problems or permission errors.
    */
   async getUserDetails(email: string) {
-    const user = await userService.getUserByEmail(email);
+    try {
+      const user = await userService.getUserByEmail(email);
 
-    if (!user) {
-      return null;
+      if (!user) {
+        return null;
+      }
+
+      return user;
+    } catch (error) {
+      throw error;
     }
-
-    return user;
   },
 
   /**
@@ -218,7 +230,7 @@ export const userService = {
 
       return favorites;
     } catch (error) {
-      throw new Error("An error occurred while fetching user favorites.");
+      throw error;
     }
   },
 
@@ -272,7 +284,7 @@ export const userService = {
       const updateCommand = new UpdateItemCommand(updateParams);
       await dynamoDB.send(updateCommand);
     } catch (error) {
-      throw new Error("An error occurred while toggling user favorite.");
+      throw error;
     }
   },
 
@@ -357,15 +369,7 @@ export const userService = {
       const updateCommand = new UpdateItemCommand(updateParams);
       await dynamoDB.send(updateCommand);
     } catch (error) {
-      // Enhanced error handling
-      console.error(
-        "Failed to update user recently viewed apps for:",
-        email,
-        error
-      );
-      throw new Error(
-        `An error occurred while updating user recently viewed apps for email: ${email}. ${error}`
-      );
+      throw error;
     }
   },
 
@@ -393,7 +397,7 @@ export const userService = {
       const command = new UpdateItemCommand(params);
       return dynamoDB.send(command);
     } catch (error) {
-      throw new Error("An error occurred while adding request to user.");
+      throw error;
     }
   },
 

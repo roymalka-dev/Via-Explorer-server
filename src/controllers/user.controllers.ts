@@ -2,6 +2,7 @@ import { RequestHandler } from "express";
 import { userService } from "../services/db.services/users.db.services";
 import { appService } from "../services/db.services/app.db.services";
 import { Request, Response } from "express";
+import logger from "../logger/logger";
 
 export const userControllers = {
   /**
@@ -32,7 +33,11 @@ export const userControllers = {
 
       res.status(200).json({ data: user });
     } catch (error) {
-      console.error(error);
+      logger.error("Error getting user details", {
+        tag: "error",
+        location: "user.controllers.ts",
+        error: (error as Error).message,
+      });
       res
         .status(500)
         .json({ message: "An error occurred while fetching user details." });
@@ -64,6 +69,11 @@ export const userControllers = {
       });
       res.status(200).json({ data: formattedUsers });
     } catch (error) {
+      logger.error("Error getting all users", {
+        tag: "error",
+        location: "user.controllers.ts",
+        error: (error as Error).message,
+      });
       res
         .status(500)
         .json({ message: "An error occurred while fetching all users." });
@@ -93,7 +103,12 @@ export const userControllers = {
 
       res.status(200).json({ data: user });
     } catch (error) {
-      console.error(error);
+      logger.error("Error editing user details", {
+        tag: "error",
+        location: "user.controllers.ts",
+        error: (error as Error).message,
+      });
+
       res
         .status(500)
         .json({ message: "An error occurred while fetching user details." });
@@ -140,7 +155,11 @@ export const userControllers = {
 
       res.status(200).json({ data: formattedApps });
     } catch (error) {
-      console.error(error);
+      logger.error("Error fetching user favorites", {
+        tag: "error",
+        location: "user.controllers.ts",
+        error: (error as Error).message,
+      });
       res
         .status(500)
         .json({ message: "An error occurred while fetching user favorites." });
@@ -185,7 +204,11 @@ export const userControllers = {
 
       res.status(200).json({ message: "Favorite item toggled successfully." });
     } catch (error) {
-      console.error(`Error toggling favorite item for user`);
+      logger.error("Error toggling user favorite", {
+        tag: "error",
+        location: "user.controllers.ts",
+        error: (error as Error).message,
+      });
       res.status(500).json({
         message: "An error occurred while toggling the favorite item.",
       });
@@ -232,7 +255,11 @@ export const userControllers = {
 
       res.status(200).json({ data: formattedApps });
     } catch (error) {
-      console.error(error);
+      logger.error("Error fetching user recently viewed apps", {
+        tag: "error",
+        location: "user.controllers.ts",
+        error: (error as Error).message,
+      });
       res.status(500).json({
         message: "An error occurred while fetching user recently viewed apps.",
       });
@@ -265,7 +292,11 @@ export const userControllers = {
       const requests = await userService.getUserRequests(userEmail);
       res.json({ data: requests });
     } catch (error) {
-      console.error("Error fetching user requests:", error);
+      logger.error("Error fetching user requests", {
+        tag: "error",
+        location: "user.controllers.ts",
+        error: (error as Error).message,
+      });
 
       res
         .status(500)

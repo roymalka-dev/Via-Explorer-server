@@ -36,7 +36,6 @@ export const configurationsService = {
 
       return configurations;
     } catch (error) {
-      console.error("Error retrieving server configurations:", error);
       throw error;
     }
   },

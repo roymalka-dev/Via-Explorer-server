@@ -39,7 +39,6 @@ export const appService = {
       const { Item } = await dynamoDB.send(new GetItemCommand(params));
       return Item ? (unmarshall(Item) as AppType) : null;
     } catch (error) {
-      console.error(`Error retrieving app with id ${id}:`, error);
       throw error;
     }
   },
@@ -100,7 +99,6 @@ export const appService = {
       // Filter out any null values and ensure TypeScript knows these are AppType
       return apps.filter((app): app is AppType => app !== null);
     } catch (error) {
-      console.error("Error getting apps by IDs:", error);
       throw new Error("Failed to get apps");
     }
   },
@@ -131,7 +129,6 @@ export const appService = {
       await dynamoDB.send(new PutCommand(params));
       return true;
     } catch (error) {
-      console.error("Error adding new app:", error);
       throw error;
     }
   },
@@ -172,8 +169,8 @@ export const appService = {
         return await gplay.app({ appId: appId });
       }
     } catch (error) {
-      console.error("Error fetching app data:", error);
-      return null;
+      throw error;
+      //return null;
     }
   },
 
@@ -219,7 +216,6 @@ export const appService = {
 
       return apps as AppType[];
     } catch (error) {
-      console.error("Error searching for app in DB:", error);
       throw error;
     }
   },

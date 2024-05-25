@@ -5,6 +5,7 @@ import { userService } from "../services/db.services/users.db.services";
 import { getConfigValue } from "../utils/configurations.utils";
 import { Request, Response } from "express";
 import { apiFunctions } from "../process/functions/api.functions";
+import logger from "../logger/logger";
 
 export const appControllers = {
   /**
@@ -93,7 +94,11 @@ export const appControllers = {
 
       res.status(200).json({ data: item });
     } catch (error) {
-      console.error("Error retrieving the app:", error);
+      logger.error("Error retrieving app", {
+        tag: "error",
+        location: "app.controllers.ts",
+        error: (error as Error).message,
+      });
       res.status(500).json({ message: "Internal server error", error });
     }
   },
@@ -130,7 +135,12 @@ export const appControllers = {
         res.status(404).json({ message: "No apps found" });
       }
     } catch (error) {
-      console.error("Error retrieving apps:", error);
+      logger.error("Error retrieving apps", {
+        tag: "error",
+        location: "app.controllers.ts",
+        error: (error as Error).message,
+      });
+
       res.status(500).json({ message: "Internal server error", error });
     }
   },
@@ -171,6 +181,11 @@ export const appControllers = {
 
       res.status(200).json({ message: "App updated successfully" });
     } catch (error) {
+      logger.error("Error updating app", {
+        tag: "error",
+        location: "app.controllers.ts",
+        error: (error as Error).message,
+      });
       res.status(500).json({ message: "Internal server error", error });
     }
   },
@@ -205,6 +220,11 @@ export const appControllers = {
 
       res.json(apps);
     } catch (error) {
+      logger.error("Error retrieving apps by IDs", {
+        tag: "error",
+        location: "app.controllers.ts",
+        error: (error as Error).message,
+      });
       res
         .status(500)
         .json({ message: "Internal server error", error: error.message });
@@ -291,6 +311,11 @@ export const appControllers = {
         res.status(400).json({ message: "Failed to add the app" });
       }
     } catch (error) {
+      logger.error("Error adding app", {
+        tag: "error",
+        location: "app.controllers.ts",
+        error: (error as Error).message,
+      });
       res.status(500).json({ message: "Internal server error", error });
     }
   },
@@ -331,8 +356,6 @@ export const appControllers = {
       const results = [];
 
       for (const appData of appsData) {
-        console.log("Adding app:", appData.name);
-
         const appStoreData = await appService.searchAppInStore(
           "appstore",
           appData.name
@@ -360,6 +383,11 @@ export const appControllers = {
       // Respond with the results for each app
       res.status(200).json(results);
     } catch (error) {
+      logger.error("Error adding apps", {
+        tag: "error",
+        location: "app.controllers.ts",
+        error: (error as Error).message,
+      });
       res.status(500).json({ message: "Internal server error", error });
     }
   },
@@ -444,6 +472,11 @@ export const appControllers = {
 
       res.status(200).json({ data: formattedApps });
     } catch (error) {
+      logger.error("Error searching apps", {
+        tag: "error",
+        location: "app.controllers.ts",
+        error: (error as Error).message,
+      });
       res.status(500).json({ message: "Internal Server Error" });
     }
   },
@@ -479,7 +512,11 @@ export const appControllers = {
       // Respond with a success message
       res.status(200).json({ message: "Apps updated successfully." });
     } catch (error) {
-      console.error("Failed to update apps:", error);
+      logger.error("Error updating apps", {
+        tag: "error",
+        location: "app.controllers.ts",
+        error: (error as Error).message,
+      });
       // Respond with an error message and the appropriate status code
       res
         .status(500)
@@ -497,7 +534,11 @@ export const appControllers = {
           throw error;
         });
     } catch (error) {
-      console.error("Error updating app IDs:", error);
+      logger.error("Error updating apps from stores", {
+        tag: "error",
+        location: "app.controllers.ts",
+        error: (error as Error).message,
+      });
       res.status(500).json({ message: "Internal server error", error });
     }
   },
@@ -512,7 +553,11 @@ export const appControllers = {
           throw error;
         });
     } catch (error) {
-      console.error("Error updating app IDs:", error);
+      logger.error("Error updating apps from stores", {
+        tag: "error",
+        location: "app.controllers.ts",
+        error: (error as Error).message,
+      });
       res.status(500).json({ message: "Internal server error", error });
     }
   },

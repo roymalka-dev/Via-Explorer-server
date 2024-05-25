@@ -6,7 +6,7 @@ export type EndpointType = {
   method: "get" | "post" | "put" | "delete";
   controller: RequestHandler;
   middleware?: RequestHandler[];
-  authority: "PUBLIC" | "USER" | "ADMIN";
+  authority?: "PUBLIC" | "USER" | "ADMIN";
 };
 
 export type RouteType = {

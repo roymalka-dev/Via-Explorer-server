@@ -59,7 +59,6 @@ export const siteServices = {
         })
       );
     } catch (error) {
-      console.error("Error updating announcements in DynamoDB:", error);
       throw error;
     }
   },

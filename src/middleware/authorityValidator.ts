@@ -13,7 +13,6 @@ export const authorityValidator = (
 
       // Check if the user's authority matches the required authority
       if (!validateUserAuth(requiredAuthority, req.session.authorization)) {
-        console.log(requiredAuthority, req.session.authorization);
         return res.status(403).send({ error: "Insufficient authority" });
       }
 

@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { requestsService } from "../services/db.services/requests.services";
 import { userService } from "../services/db.services/users.db.services";
+import logger from "../logger/logger";
 
 export const requestsControllers = {
   /**
@@ -40,6 +41,12 @@ export const requestsControllers = {
 
       res.status(200).json({ data: { presignedUrl, fileUrl, hashedFileName } });
     } catch (error) {
+      logger.error("Error getting S3 presigned URL", {
+        tag: "error",
+        location: "requests.controllers.ts",
+        error: (error as Error).message,
+      });
+
       res.status(500).json({ message: "Internal server error" });
     }
   },
@@ -71,6 +78,11 @@ export const requestsControllers = {
       await requestsService.removeS3Object(bucketName, fileName);
       res.status(200).json({ message: "File removed successfully" });
     } catch (error) {
+      logger.error("Error removing S3 object", {
+        tag: "error",
+        location: "requests.controllers.ts",
+        error: (error as Error).message,
+      });
       res.status(500).json({ message: "Internal server error" });
     }
   },
@@ -115,6 +127,11 @@ export const requestsControllers = {
         message: `Request ${reqId} created successfully`,
       });
     } catch (error) {
+      logger.error("Error creating new app request", {
+        tag: "error",
+        location: "requests.controllers.ts",
+        error: (error as Error).message,
+      });
       res.status(500).json({ message: "Internal server error" });
     }
   },
@@ -138,6 +155,11 @@ export const requestsControllers = {
       const requests = await requestsService.getAllRequests();
       res.status(200).json({ data: requests });
     } catch (error) {
+      logger.error("Error getting all requests", {
+        tag: "error",
+        location: "requests.controllers.ts",
+        error: (error as Error).message,
+      });
       res.status(500).json({ message: "Internal server error" });
     }
   },
@@ -167,6 +189,11 @@ export const requestsControllers = {
       }
       res.status(200).json({ data: request[0] });
     } catch (error) {
+      logger.error("Error getting request by ID", {
+        tag: "error",
+        location: "requests.controllers.ts",
+        error: (error as Error).message,
+      });
       res.status(500).json({ message: "Internal server error" });
     }
   },
@@ -223,6 +250,11 @@ export const requestsControllers = {
       );
       res.status(200).json({ data: updatedRequest });
     } catch (error) {
+      logger.error("Error updating request status", {
+        tag: "error",
+        location: "requests.controllers.ts",
+        error: (error as Error).message,
+      });
       res.status(500).json({ message: "Internal server error" });
     }
   },
@@ -261,6 +293,11 @@ export const requestsControllers = {
       await requestsService.deleteRequestById(id);
       res.status(200).json({ message: "Request deleted successfully" });
     } catch (error) {
+      logger.error("Error deleting request by ID", {
+        tag: "error",
+        location: "requests.controllers.ts",
+        error: (error as Error).message,
+      });
       res.status(500).json({ message: "Internal server error" });
     }
   },

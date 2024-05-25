@@ -46,7 +46,6 @@ export const googleServices = {
 
       return response.data.values;
     } catch (error) {
-      console.error("The API returned an error: " + error);
       throw error;
     }
   },

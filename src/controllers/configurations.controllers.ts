@@ -1,3 +1,4 @@
+import logger from "../logger/logger";
 import { configurationsService } from "../services/db.services/configurations.db.services";
 import { Request, Response } from "express";
 
@@ -30,7 +31,11 @@ export const configurationControllers = {
         data: configurations,
       });
     } catch (error) {
-      console.error("Error retrieving server configurations:", error);
+      logger.error("Error getting all configurations", {
+        tag: "error",
+        location: "configurations.controllers.ts",
+        error: (error as Error).message,
+      });
 
       res
         .status(500)
@@ -74,6 +79,11 @@ export const configurationControllers = {
         });
       }
     } catch (error) {
+      logger.error("Error editing configuration", {
+        tag: "error",
+        location: "configurations.controllers.ts",
+        error: (error as Error).message,
+      });
       res
         .status(500)
         .json({ message: "Internal server error", error: error.message });
