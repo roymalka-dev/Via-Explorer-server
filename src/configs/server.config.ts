@@ -35,7 +35,7 @@ export const serverConfig = (server: Application) => {
       resave: false,
       saveUninitialized: false,
       cookie: {
-        secure: process.env.NODE_ENV === "DEV" ? false : true,
+        secure: process.env.NODE_ENV === "DEV" ? false : false,
         httpOnly: true,
         maxAge: TIME_TO_END_SERVER_USER_SESSION_IN_HR * 60 * 60 * 1000,
       },
