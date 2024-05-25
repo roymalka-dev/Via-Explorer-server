@@ -90,12 +90,13 @@ export const authenticator: RequestHandler = async (req, res, next) => {
         } else {
         }
       });
+
+      logger.info(`User connected: ${payload.email}`, {
+        tag: "user-connected",
+        location: "authenticator.ts",
+      });
     }
 
-    logger.info(`User connected: ${payload.email}`, {
-      tag: "user-connected",
-      location: "authenticator.ts",
-    });
     next();
   } catch (error) {
     logger.error("Authentication error", {
