@@ -7,7 +7,10 @@ const scheduler = cron.schedule("0 0 * * *", () => {
   apiFunctions
     .updatePSOGoogleSheet()
     .then(() => {
-      console.log("Update PSO list successfully!");
+      logger.info("Update PSO list successfully!", {
+        tag: "info",
+        location: "scheduler.ts",
+      });
     })
     .catch((error) => {
       logger.error("Error updating PSO list", {
@@ -20,7 +23,10 @@ const scheduler = cron.schedule("0 0 * * *", () => {
   apiFunctions
     .updateAllAppsFromStore()
     .then(() => {
-      console.log("Updated all apps from store successfully!");
+      logger.info("Update all apps from store successfully!", {
+        tag: "info",
+        location: "scheduler.ts",
+      });
     })
     .catch((error) => {
       logger.error("Error updating all apps from store", {
