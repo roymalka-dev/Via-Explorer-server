@@ -8,6 +8,7 @@ import {
   UpdateCommandInput,
 } from "@aws-sdk/lib-dynamodb";
 import axios from "axios";
+import logger from "../../logger/logger";
 
 const tableName = "apps";
 
@@ -169,6 +170,11 @@ export const appService = {
         return await gplay.app({ appId: appId });
       }
     } catch (error) {
+      logger.error(`Error searching for app ${appId} in ${store}`, {
+        tag: "error",
+        location: "app.services.ts",
+        error: error.message,
+      });
       throw error;
       //return null;
     }
