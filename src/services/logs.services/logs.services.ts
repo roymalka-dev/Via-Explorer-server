@@ -43,15 +43,15 @@ export const logsServices = {
 
                 // Attempt to parse metadata if present
                 let metadata;
-                const metadataIndex = message.lastIndexOf(" {");
-                if (metadataIndex !== -1) {
-                  const metadataString = message.substring(metadataIndex + 1);
+                const metadataMatch = message.match(/({.*})$/);
+                if (metadataMatch) {
+                  const metadataString = metadataMatch[1];
                   try {
                     metadata = JSON.parse(metadataString);
                     return {
                       timestamp,
                       level,
-                      message: message.substring(0, metadataIndex).trim(),
+                      message: message.replace(metadataString, "").trim(),
                       metadata,
                     };
                   } catch (jsonError) {
