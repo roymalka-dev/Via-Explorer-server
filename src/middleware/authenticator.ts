@@ -104,6 +104,6 @@ export const authenticator: RequestHandler = async (req, res, next) => {
       location: "authenticator.ts",
       error: error.message,
     });
-    res.status(403).send({ error: error.message });
+    res.status(403).send({ error: error.message, status: 403 });
   }
 };

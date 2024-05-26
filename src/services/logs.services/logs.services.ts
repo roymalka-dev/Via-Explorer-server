@@ -22,29 +22,50 @@ export const logsServices = {
 
       const logContents = await Promise.all(logContentPromises);
 
-      const logEntries: LogEntry[] = logContents.flatMap((content) =>
-        content
-          .split("\n")
-          .filter((line) => line)
-          .map((line) => {
-            const [timestamp, rest] = line.split(" [");
-            const [level, ...messageParts] = rest.split("]: ");
-            const message = messageParts.join("]: ");
+      const logEntries: LogEntry[] = logContents.flatMap(
+        (content) =>
+          content
+            .split("\n")
+            .filter((line) => line.trim()) // Ensure we are not processing empty lines
+            .map((line) => {
+              try {
+                const [timestamp, rest] = line.split(" [");
+                if (!rest) {
+                  // If the log line doesn't contain expected format, skip it
+                  return null;
+                }
+                const [level, ...messageParts] = rest.split("]: ");
+                if (!messageParts.length) {
+                  // If the log line doesn't contain expected format, skip it
+                  return null;
+                }
+                const message = messageParts.join("]: ");
 
-            // Attempt to parse metadata if present
-            let metadata;
-            const metadataIndex = message.lastIndexOf(" {");
-            if (metadataIndex !== -1) {
-              metadata = JSON.parse(message.substring(metadataIndex + 1));
-              return {
-                timestamp,
-                level,
-                message: message.substring(0, metadataIndex).trim(),
-                metadata,
-              };
-            }
-            return { timestamp, level, message };
-          })
+                // Attempt to parse metadata if present
+                let metadata;
+                const metadataIndex = message.lastIndexOf(" {");
+                if (metadataIndex !== -1) {
+                  const metadataString = message.substring(metadataIndex + 1);
+                  try {
+                    metadata = JSON.parse(metadataString);
+                    return {
+                      timestamp,
+                      level,
+                      message: message.substring(0, metadataIndex).trim(),
+                      metadata,
+                    };
+                  } catch (jsonError) {
+                    console.error("Failed to parse metadata:", jsonError);
+                    // Optionally log the error and continue without metadata
+                  }
+                }
+                return { timestamp, level, message };
+              } catch (err) {
+                console.error("Error processing line:", line, err);
+                return null;
+              }
+            })
+            .filter((entry) => entry !== null) // Filter out null entries
       );
 
       return logEntries;
