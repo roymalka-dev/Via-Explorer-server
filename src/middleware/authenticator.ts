@@ -99,7 +99,7 @@ export const authenticator: RequestHandler = async (req, res, next) => {
 
     next();
   } catch (error) {
-    logger.error("Authentication error", {
+    logger.error(`Authentication error`, {
       tag: "error",
       location: "authenticator.ts",
       error: error.message,

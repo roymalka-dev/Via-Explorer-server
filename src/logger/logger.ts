@@ -4,7 +4,9 @@ import "winston-daily-rotate-file";
 const logFormat = format.printf(({ timestamp, level, message, metadata }) => {
   let logMessage = `${timestamp} [${level}]: ${message}`;
   if (metadata && Object.keys(metadata).length) {
-    logMessage += ` ${JSON.stringify(metadata, null, 2)}`;
+    if (metadata.tag) logMessage += ` [tag: ${metadata.tag}]`;
+    if (metadata.location) logMessage += ` [location: ${metadata.location}]`;
+    if (metadata.error) logMessage += ` [error: ${metadata.error}]`;
   }
   return logMessage;
 });

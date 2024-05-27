@@ -7,7 +7,9 @@ interface LogEntry {
   timestamp: string;
   level: string;
   message: string;
-  metadata?: Record<string, any>;
+  tag?: string;
+  location?: string;
+  error?: string;
 }
 
 export const logsServices = {
@@ -22,55 +24,64 @@ export const logsServices = {
 
       const logContents = await Promise.all(logContentPromises);
 
-      const logEntries: LogEntry[] = logContents.flatMap(
-        (content) =>
-          content
-            .split("\n")
-            .filter((line) => line.trim()) // Ensure we are not processing empty lines
-            .map((line) => {
-              try {
-                const [timestamp, rest] = line.split(" [");
-                if (!rest) {
-                  // If the log line doesn't contain expected format, skip it
-                  return null;
-                }
-                const [level, ...messageParts] = rest.split("]: ");
-                if (!messageParts.length) {
-                  // If the log line doesn't contain expected format, skip it
-                  return null;
-                }
-                const message = messageParts.join("]: ");
+      const logEntries: LogEntry[] = logContents.flatMap((content) =>
+        content
+          .split("\n")
+          .filter((line) => line.trim())
+          .map((line) => {
+            const logEntry: LogEntry = {
+              timestamp: "",
+              level: "",
+              message: "",
+            };
 
-                // Attempt to parse metadata if present
-                let metadata;
-                const metadataMatch = message.match(/({.*})$/);
-                if (metadataMatch) {
-                  const metadataString = metadataMatch[1];
-                  try {
-                    metadata = JSON.parse(metadataString);
-                    return {
-                      timestamp,
-                      level,
-                      message: message.replace(metadataString, "").trim(),
-                      metadata,
-                    };
-                  } catch (jsonError) {
-                    console.error("Failed to parse metadata:", jsonError);
-                    // Optionally log the error and continue without metadata
-                  }
-                }
-                return { timestamp, level, message };
-              } catch (err) {
-                console.error("Error processing line:", line, err);
-                return null;
-              }
-            })
-            .filter((entry) => entry !== null) // Filter out null entries
+            // Extract timestamp
+            const timestampEndIndex = line.indexOf(" [");
+            if (timestampEndIndex === -1) {
+              console.error("Invalid log format:", line);
+              return null;
+            }
+            logEntry.timestamp = line.substring(0, timestampEndIndex).trim();
+
+            // Extract level
+            const levelStartIndex = timestampEndIndex + 2;
+            const levelEndIndex = line.indexOf("]: ", levelStartIndex);
+            if (levelEndIndex === -1) {
+              console.error("Invalid log format:", line);
+              return null;
+            }
+            logEntry.level = line
+              .substring(levelStartIndex, levelEndIndex)
+              .trim();
+
+            // Extract message and metadata
+            const messageStartIndex = levelEndIndex + 3;
+            const messageEndIndex = line.indexOf(" [tag: ", messageStartIndex);
+            logEntry.message =
+              messageEndIndex === -1
+                ? line.substring(messageStartIndex).trim()
+                : line.substring(messageStartIndex, messageEndIndex).trim();
+
+            // Extract optional fields (tag, location, error)
+            const tagMatch = line.match(/\[tag: (.*?)\]/);
+            if (tagMatch) logEntry.tag = tagMatch[1];
+
+            const locationMatch = line.match(/\[location: (.*?)\]/);
+            if (locationMatch) logEntry.location = locationMatch[1];
+
+            const errorMatch = line.match(/\[error: (.*?)\]/);
+            if (errorMatch) logEntry.error = errorMatch[1];
+
+            return logEntry;
+          })
       );
 
-      return logEntries;
+      return logEntries.filter((entry): entry is LogEntry => entry !== null);
     } catch (error) {
+      console.error("Error reading log files:", error);
       throw error;
     }
   },
 };
+
+export default logsServices;
