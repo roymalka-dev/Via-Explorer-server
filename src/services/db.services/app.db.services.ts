@@ -197,17 +197,21 @@ export const appService = {
    * @throws {Error} Throws an error if there's an issue performing the search operation in DynamoDB.
    */
   searchAppsInDb: async (query: string): Promise<AppType[]> => {
+    const lowerCaseQuery = query.toLowerCase();
+    const upperCaseQuery = query.toUpperCase();
+
     const searchParams = {
       TableName: tableName,
       FilterExpression:
-        "contains(#id, :query) OR contains(#queryName, :query) OR contains(#tenant, :query)",
+        "contains(#id, :lowerCaseQuery) OR contains(#queryName, :lowerCaseQuery) OR contains(#tenant, :upperCaseQuery)",
       ExpressionAttributeNames: {
         "#id": "id",
         "#queryName": "queryName",
         "#tenant": "tenant",
       },
       ExpressionAttributeValues: {
-        ":query": { S: query },
+        ":lowerCaseQuery": { S: lowerCaseQuery },
+        ":upperCaseQuery": { S: upperCaseQuery },
       },
     };
 
