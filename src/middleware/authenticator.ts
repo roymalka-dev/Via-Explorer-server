@@ -47,10 +47,16 @@ export const authenticator: RequestHandler = async (req, res, next) => {
       return next();
     }
 
-    const ticket = await client.verifyIdToken({
-      idToken: token,
-      audience: process.env.GOOGLE_CLIENT_ID,
-    });
+    let ticket;
+
+    try {
+      ticket = await client.verifyIdToken({
+        idToken: token,
+        audience: process.env.GOOGLE_CLIENT_ID,
+      });
+    } catch (error) {
+      return res.status(403).send({ error: error.message, status: 403 });
+    }
 
     const payload = ticket.getPayload();
 
