@@ -1,4 +1,5 @@
 import { RequestHandler } from "express";
+import logger from "../logger/logger";
 import * as yup from "yup";
 
 /**
@@ -17,6 +18,11 @@ export const validateRequest = (
       await schema.validate(req[property], { abortEarly: false });
       next();
     } catch (error) {
+      logger.error(`Validation error`, {
+        tag: "error",
+        location: "validator.ts",
+        error: req?.session?.user + " " + error.message,
+      });
       if (error instanceof yup.ValidationError) {
         res
           .status(400)

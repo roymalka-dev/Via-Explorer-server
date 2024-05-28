@@ -108,7 +108,7 @@ export const authenticator: RequestHandler = async (req, res, next) => {
     logger.error(`Authentication error`, {
       tag: "error",
       location: "authenticator.ts",
-      error: error.message,
+      error: req?.session?.user + " " + error.message,
     });
     res.status(403).send({ error: error.message, status: 403 });
   }
