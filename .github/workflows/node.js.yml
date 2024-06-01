@@ -29,11 +29,11 @@ jobs:
         key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
         restore-keys: |
           ${{ runner.os }}-node-
-          
+
     - name: Backup logs directory
       run: |
+        mkdir -p backup
         if [ -d "logs" ]; then
-          mkdir -p backup
           cp -r logs backup/
         fi
 
