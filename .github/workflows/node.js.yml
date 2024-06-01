@@ -29,12 +29,12 @@ jobs:
         key: ${{ runner.os }}-node-${{ hashFiles('package-lock.json') }}
         restore-keys: |
           ${{ runner.os }}-node-
-
+          
     - name: Backup logs directory
       run: |
-        mkdir -p backup
         if [ -d "logs" ]; then
-          mv logs backup/
+          mkdir -p backup
+          cp -r logs backup/
         fi
 
     - run: npm ci
@@ -49,7 +49,7 @@ jobs:
     - name: Restore logs directory
       run: |
         if [ -d "backup/logs" ]; then
-          mv backup/logs .
+          cp -r backup/logs .
         fi
 
     - name: Restart PM2
