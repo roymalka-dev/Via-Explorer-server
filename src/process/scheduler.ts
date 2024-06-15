@@ -4,6 +4,7 @@ import { apiFunctions } from "./functions/api.functions";
 import logger from "../logger/logger";
 
 const scheduler = cron.schedule("0 0 * * *", () => {
+  /*
   apiFunctions
     .updatePSOGoogleSheet()
     .then(() => {
@@ -19,6 +20,7 @@ const scheduler = cron.schedule("0 0 * * *", () => {
         error: error.message,
       });
     });
+  */
 
   apiFunctions
     .updateAllAppsFromStore()
