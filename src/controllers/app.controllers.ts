@@ -270,11 +270,11 @@ export const appControllers = {
 
       const appStoreData = await appService.searchAppInStore(
         "appstore",
-        app.name
+        app.iosAppId
       );
       const playStoreData = await appService.searchAppInStore(
         "playstore",
-        app.name
+        app.androidAppId
       );
 
       if (appStoreData) {
