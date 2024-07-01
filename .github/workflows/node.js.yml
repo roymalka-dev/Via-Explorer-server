@@ -58,7 +58,7 @@ jobs:
         touch .env
         echo "${{ secrets.PROD_ENV_FILE }}" > .env
 
-    - name: List root directory before restore
+    - name: List directory before restore
       run: ls -R
 
     - name: Restore logs directory
