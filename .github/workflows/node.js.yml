@@ -33,7 +33,7 @@ jobs:
     - name: Print working directory
       run: pwd
 
-    - name: List root directory
+    - name: List root directory before backup
       run: ls -R
 
     - name: Backup logs directory
@@ -41,6 +41,9 @@ jobs:
         mkdir -p ../backup
         if [ -d "logs" ]; then
           cp -r logs ../backup/
+          echo "Logs directory backed up."
+        else
+          echo "Logs directory does not exist."
         fi
 
     - name: List backup directory
@@ -55,13 +58,16 @@ jobs:
         touch .env
         echo "${{ secrets.PROD_ENV_FILE }}" > .env
 
-    - name: List directory before restore
+    - name: List root directory before restore
       run: ls -R
 
     - name: Restore logs directory
       run: |
         if [ -d "../backup/logs" ]; then
           cp -r ../backup/logs .
+          echo "Logs directory restored."
+        else
+          echo "Backup logs directory does not exist."
         fi
 
     - name: List restored logs directory
