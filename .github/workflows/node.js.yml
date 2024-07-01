@@ -30,12 +30,21 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-node-
 
+    - name: Print working directory
+      run: pwd
+
+    - name: List root directory
+      run: ls -R
+
     - name: Backup logs directory
       run: |
-        mkdir -p backup
+        mkdir -p ../backup
         if [ -d "logs" ]; then
-          cp -r logs backup/
+          cp -r logs ../backup/
         fi
+
+    - name: List backup directory
+      run: ls -R ../backup
 
     - run: npm ci
 
@@ -46,11 +55,17 @@ jobs:
         touch .env
         echo "${{ secrets.PROD_ENV_FILE }}" > .env
 
+    - name: List directory before restore
+      run: ls -R
+
     - name: Restore logs directory
       run: |
-        if [ -d "backup/logs" ]; then
-          cp -r backup/logs .
+        if [ -d "../backup/logs" ]; then
+          cp -r ../backup/logs .
         fi
+
+    - name: List restored logs directory
+      run: ls -R logs
 
     - name: Restart PM2
       run: |
