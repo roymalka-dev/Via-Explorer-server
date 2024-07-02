@@ -1,12 +1,13 @@
 import { RequestHandler } from "express";
 import { validateUserAuth } from "../utils/auth.utils";
-import { stat } from "fs-extra";
 
 export const authorityValidator = (
   requiredAuthority: string
 ): RequestHandler => {
   return (req, res, next) => {
     try {
+      if (requiredAuthority === "PUBLIC") return next();
+
       // Ensure the session exists
       if (!req.session || !req.session.user || !req.session.authorization) {
         return res.status(401).send({ error: "Unauthorized", status: 401 });

@@ -157,6 +157,8 @@ export const appService = {
     appId: string
   ): Promise<any> => {
     try {
+      if (!appId || appId === "" || appId === undefined) return null;
+
       if (store === "appstore") {
         const url = `https://itunes.apple.com/lookup?id=${appId}`;
         const response = await axios.get(url);

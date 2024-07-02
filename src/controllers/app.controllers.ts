@@ -6,6 +6,8 @@ import { getConfigValue } from "../utils/configurations.utils";
 import { Request, Response } from "express";
 import { apiFunctions } from "../process/functions/api.functions";
 import logger from "../logger/logger";
+import { flexityServices } from "../services/api.services/flexity.services";
+import { extractElementByType } from "../utils/data.utils";
 
 export const appControllers = {
   /**
@@ -561,6 +563,27 @@ export const appControllers = {
         error: (error as Error).message,
       });
       res.status(500).json({ message: "Internal server error", error });
+    }
+  },
+  updateCityStatusFromFlexity: async (req: Request, res: Response) => {
+    try {
+      //const status = await flexityServices.getFlexityDataByElement("service_status" );
+
+      //const envs = await flexityServices.getFlexityDataByElement("city_code");
+
+      const city = await flexityServices.getFlexityDataByElement("city_name");
+
+      //const formattedStatus = extractElementByType(status,"service_status","service_status");
+
+      //const formattedEnv = extractElementByType(envs, "city_code", "env");
+
+      const formattedCity = extractElementByType(city, "city_name", "city");
+
+      await appService.updateMultipleApps(formattedCity as any);
+
+      return res.status(200).json({ data: formattedCity });
+    } catch (error) {
+      return res.status(500).json({ message: "Internal server error", error });
     }
   },
 };
