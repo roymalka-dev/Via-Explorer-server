@@ -573,15 +573,80 @@ export const appControllers = {
 
       const city = await flexityServices.getFlexityDataByElement("city_name");
 
-      //const formattedStatus = extractElementByType(status,"service_status","service_status");
+      const country = await flexityServices.getFlexityDataByElement("country");
+
+      // const tenant = await flexityServices.getFlexityDataByElement("tenant_id");
+      //const operation = await flexityServices.getFlexityDataByElement("operation_type");
+
+      const schedule = await flexityServices.getFlexityDataByElement(
+        "schedule_type"
+      );
+
+      const region = await flexityServices.getFlexityDataByElement(
+        "server_region"
+      );
+      const timezone = await flexityServices.getFlexityDataByElement(
+        "timezone"
+      );
+      const stack = await flexityServices.getFlexityDataByElement(
+        "stack_version"
+      );
+      const service = await flexityServices.getFlexityDataByElement("use_Case");
+      const subservices = await flexityServices.getFlexityDataByElement(
+        "subservices"
+      );
+
+      //const formattedStatus = extractElementByType(status,"service_status","serviceStatus");
 
       //const formattedEnv = extractElementByType(envs, "city_code", "env");
 
-      const formattedCity = extractElementByType(city, "city_name", "city");
+      //const formattedCity = extractElementByType(city, "city_name", "city");
 
-      await appService.updateMultipleApps(formattedCity as any);
+      //const formattedCountry = extractElementByType(country,"country", "country");
 
-      return res.status(200).json({ data: formattedCity });
+      // const formattedTenant = extractElementByType(tenant, "tenant_id", "tenant");
+
+      //const formattedOperation = extractElementByType(operation,"operation_type", "operationType");
+
+      const formattedSchedule = extractElementByType(
+        schedule,
+        "schedule_type",
+        "scheduleType"
+      );
+      const formattedRegion = extractElementByType(
+        region,
+        "server_region",
+        "region"
+      );
+      const formattedTimezone = extractElementByType(
+        timezone,
+        "cityTimezone",
+        "timezone"
+      );
+      const formattedStack = extractElementByType(
+        stack,
+        "stack_version",
+        "stack"
+      );
+      const formattedService = extractElementByType(
+        service,
+        "use_case",
+        "serviceType"
+      );
+      const formattedSubservices = extractElementByType(
+        subservices,
+        "subservices",
+        "subservices"
+      );
+
+      await appService.updateMultipleApps(formattedSchedule as any);
+      await appService.updateMultipleApps(formattedRegion as any);
+      await appService.updateMultipleApps(formattedTimezone as any);
+      await appService.updateMultipleApps(formattedStack as any);
+      await appService.updateMultipleApps(formattedService as any);
+      await appService.updateMultipleApps(formattedSubservices as any);
+
+      return res.status(200).json({ data: formattedSchedule });
     } catch (error) {
       return res.status(500).json({ message: "Internal server error", error });
     }

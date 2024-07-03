@@ -9,7 +9,7 @@ export type AppType = {
   queryName?: string;
   iosAppId?: string;
   androidAppId?: string;
-  serviceStatus?: string;
+  service_status?: string;
   env: string;
   tenant: string;
   city: string;

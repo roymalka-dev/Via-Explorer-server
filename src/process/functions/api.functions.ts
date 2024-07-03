@@ -75,6 +75,12 @@ export const apiFunctions = {
       }
 
       for (const app of appsToUpdate) {
+        if (
+          app.service_status === "suspended" ||
+          !app.androidAppId ||
+          !app.iosAppId
+        )
+          return; // Skip suspended apps
         try {
           const appStoreData = await appService.searchAppInStore(
             "appstore",
