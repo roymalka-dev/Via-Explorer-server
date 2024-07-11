@@ -9,6 +9,7 @@ import { siteEndpoints } from "./endpoints/site.endpoints";
 import { authEndpoints } from "./endpoints/auth.endpoints";
 import { logsEndpoints } from "./endpoints/logs.endpoints";
 import { testEndpoints } from "./endpoints/test.endpoints";
+import { publicEndpoints } from "./endpoints/public.endpoints";
 
 export const routes: RouteType[] = [
   /**
@@ -90,6 +91,12 @@ export const routes: RouteType[] = [
     path: "/logs",
     endpoints: logsEndpoints,
     middleware: [authenticator],
+  },
+  {
+    name: "public",
+    path: "/public",
+    endpoints: publicEndpoints,
+    middleware: [],
   },
 
   {
