@@ -61,6 +61,7 @@ export const serverConfig = (server: Application) => {
               process.env.PRODUCTION_CORS_URL2,
               process.env.PRODUCTION_CORS_URL3,
               process.env.APPLE_API_URL,
+              "*",
             ],
     })
   );
